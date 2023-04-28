@@ -17,6 +17,7 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     using Address for address;
     using Strings for uint256;
+    using Strings for address;
 
     // Token name
     string private _name;
@@ -29,6 +30,10 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
 
     // Factory address
     address private _factory;
+
+    address private _tokenX;
+
+    address private _tokenY;
 
     // Mapping from token ID to owner address
     mapping(uint256 => address) private _owners;
@@ -45,10 +50,18 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
-    constructor(string memory name_, string memory symbol_, address factory_) {
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        address factory_,
+        address tokenX_,
+        address tokenY_
+    ) {
         _name = name_;
         _symbol = symbol_;
         _factory = factory_;
+        _tokenX = tokenX_;
+        _tokenY = tokenY_;
     }
 
     modifier onlyPair() {
@@ -80,9 +93,13 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(ERC165, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC165, IERC165)
+        returns (bool)
+    {
         return
             interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC721Metadata).interfaceId ||
@@ -92,9 +109,13 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-balanceOf}.
      */
-    function balanceOf(
-        address owner
-    ) public view virtual override returns (uint256) {
+    function balanceOf(address owner)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         require(
             owner != address(0),
             "LPToken: address zero is not a valid owner"
@@ -105,9 +126,13 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(
-        uint256 tokenId
-    ) public view virtual override returns (address) {
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
         address owner = _ownerOf(tokenId);
         require(owner != address(0), "LPToken: invalid token ID");
         return owner;
@@ -130,15 +155,19 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         _requireMinted(tokenId);
 
         string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, tokenId.toString()))
+                ? string(abi.encodePacked(baseURI, _tokenX.toHexString(), "/", _tokenY.toHexString(), "/", tokenId.toString()))
                 : "";
     }
 
@@ -148,7 +177,7 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
      * by default, can be overridden in child contracts.
      */
     function _baseURI() internal view virtual returns (string memory) {
-        return "";
+        return "www.midaswap.org/";
     }
 
     /**
@@ -169,9 +198,13 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-getApproved}.
      */
-    function getApproved(
-        uint256 tokenId
-    ) public view virtual override returns (address) {
+    function getApproved(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
         _requireMinted(tokenId);
 
         return _tokenApprovals[tokenId];
@@ -180,20 +213,24 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-setApprovalForAll}.
      */
-    function setApprovalForAll(
-        address operator,
-        bool approved
-    ) public virtual override {
+    function setApprovalForAll(address operator, bool approved)
+        public
+        virtual
+        override
+    {
         _setApprovalForAll(_msgSender(), operator, approved);
     }
 
     /**
      * @dev See {IERC721-isApprovedForAll}.
      */
-    function isApprovedForAll(
-        address owner,
-        address operator
-    ) public view virtual override returns (bool) {
+    function isApprovedForAll(address owner, address operator)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return _operatorApprovals[owner][operator];
     }
 
@@ -298,10 +335,12 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
      *
      * - `tokenId` must exist.
      */
-    function _isApprovedOrOwner(
-        address spender,
-        uint256 tokenId
-    ) internal view virtual returns (bool) {
+    function _isApprovedOrOwner(address spender, uint256 tokenId)
+        internal
+        view
+        virtual
+        returns (bool)
+    {
         address owner = LPToken.ownerOf(tokenId);
         return (spender == owner ||
             isApprovedForAll(owner, spender) ||
@@ -549,7 +588,7 @@ contract LPToken is Context, ERC165, IERC721, IERC721Metadata {
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 /* firstTokenId */,
+        uint256, /* firstTokenId */
         uint256 batchSize
     ) internal virtual {
         if (batchSize > 1) {
