@@ -79,6 +79,14 @@ interface IMidasRouter {
         uint256 _deadline
     ) external returns (uint256 idAmount, uint128 lpTokenId);
     
+    function openMultiLimitOrders(
+        address _tokenX,
+        address _tokenY,
+        uint24[] calldata _ids,
+        uint256[] calldata _tokenIds,
+        uint256 _deadline
+    ) external returns (uint128[] memory lpTokenIds);
+    
     function claimFee(
         address _tokenX,
         address _tokenY,
