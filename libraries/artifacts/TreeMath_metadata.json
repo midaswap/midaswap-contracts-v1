@@ -1,0 +1,56 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"author": "Trader Joe",
+			"kind": "dev",
+			"methods": {},
+			"title": "Liquidity Book Tree Math Library",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "This library contains functions to interact with a tree of TreeUint24.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Midas_testV1.2/src/libraries/TreeMath.sol": "TreeMath"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 0
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Midas_testV1.2/src/libraries/BitMath.sol": {
+			"keccak256": "0xfa6411022d4cbcc0be4975f5ad9b6ccd7eeeb09eeae6b245c1c6dfd2b0f9f70a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://32a9a5864445f46bb1bd872774ec2249fc378fb522d3c8fa21c30529d6c46e50",
+				"dweb:/ipfs/Qma1fUyazpFeiM6Dsk6qLX54WQoZubiyX6LbAY7dcPuJRQ"
+			]
+		},
+		"Midas_testV1.2/src/libraries/TreeMath.sol": {
+			"keccak256": "0xee87a7b47dd549dccd05b71e02bcfbb341ba8a50dba434625eb3d5ad101c68c9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9d75af7f94a62fd2cec3b1aae40b76090ad26bfb106864a7c4a6191e27d8e4e5",
+				"dweb:/ipfs/QmPHrUT3hMHSdfcck2b445TTsmTyFhpLbVmfsspTg8G4ta"
+			]
+		}
+	},
+	"version": 1
+}

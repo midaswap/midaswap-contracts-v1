@@ -1,0 +1,48 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"author": "midaswap",
+			"kind": "dev",
+			"methods": {},
+			"title": "Midas ",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Helper contract used for fees calculation",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Midas_testV1.2/src/libraries/FeeHelper.sol": "FeeHelper"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 100
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Midas_testV1.2/src/libraries/FeeHelper.sol": {
+			"keccak256": "0xe53eef749863edaf3a8d2463f267dd3bcfa85ef5c2749364b47eb5fb6efaba33",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://08f0bdd6dbedd8ecba6402b6d64fba727c1c047182039449204916316ce0c0eb",
+				"dweb:/ipfs/QmXqip58WkLTzg8odSiEd5gDabCtekDRYBUizDicRcvCTE"
+			]
+		}
+	},
+	"version": 1
+}

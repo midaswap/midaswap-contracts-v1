@@ -1,0 +1,249 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220fdacfaa302ab887a994606a98c3321f0fe291447354129916dc23ee7764d530a64736f6c634300080a0033",
+			"opcodes": "PUSH1 0x56 PUSH1 0x50 PUSH1 0xB DUP3 DUP3 DUP3 CODECOPY DUP1 MLOAD PUSH1 0x0 BYTE PUSH1 0x73 EQ PUSH1 0x43 JUMPI PUSH32 0x4E487B7100000000000000000000000000000000000000000000000000000000 PUSH1 0x0 MSTORE PUSH1 0x0 PUSH1 0x4 MSTORE PUSH1 0x24 PUSH1 0x0 REVERT JUMPDEST ADDRESS PUSH1 0x0 MSTORE PUSH1 0x73 DUP2 MSTORE8 DUP3 DUP2 RETURN INVALID PUSH20 0x0 ADDRESS EQ PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 REVERT 0xAC STATICCALL LOG3 MUL 0xAB DUP9 PUSH27 0x994606A98C3321F0FE291447354129916DC23EE7764D530A64736F PUSH13 0x634300080A0033000000000000 ",
+			"sourceMap": "222:10748:0:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220fdacfaa302ab887a994606a98c3321f0fe291447354129916dc23ee7764d530a64736f6c634300080a0033",
+			"opcodes": "PUSH20 0x0 ADDRESS EQ PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 REVERT 0xAC STATICCALL LOG3 MUL 0xAB DUP9 PUSH27 0x994606A98C3321F0FE291447354129916DC23EE7764D530A64736F PUSH13 0x634300080A0033000000000000 ",
+			"sourceMap": "222:10748:0:-:0;;;;;;;;"
+		},
+		"gasEstimates": {
+			"creation": {
+				"codeDepositCost": "17200",
+				"executionCost": "97",
+				"totalCost": "17297"
+			},
+			"internal": {
+				"safe104(uint256)": "infinite",
+				"safe112(uint256)": "infinite",
+				"safe120(uint256)": "infinite",
+				"safe128(uint256)": "infinite",
+				"safe136(uint256)": "infinite",
+				"safe144(uint256)": "infinite",
+				"safe152(uint256)": "infinite",
+				"safe16(uint256)": "infinite",
+				"safe160(uint256)": "infinite",
+				"safe168(uint256)": "infinite",
+				"safe176(uint256)": "infinite",
+				"safe184(uint256)": "infinite",
+				"safe192(uint256)": "infinite",
+				"safe200(uint256)": "infinite",
+				"safe208(uint256)": "infinite",
+				"safe216(uint256)": "infinite",
+				"safe224(uint256)": "infinite",
+				"safe232(uint256)": "infinite",
+				"safe24(uint256)": "infinite",
+				"safe240(uint256)": "infinite",
+				"safe248(uint256)": "infinite",
+				"safe32(uint256)": "infinite",
+				"safe40(uint256)": "infinite",
+				"safe48(uint256)": "infinite",
+				"safe56(uint256)": "infinite",
+				"safe64(uint256)": "infinite",
+				"safe72(uint256)": "infinite",
+				"safe8(uint256)": "infinite",
+				"safe80(uint256)": "infinite",
+				"safe88(uint256)": "infinite",
+				"safe96(uint256)": "infinite"
+			}
+		},
+		"methodIdentifiers": {}
+	},
+	"abi": [
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds104Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds112Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds120Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds128Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds136Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds144Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds152Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds160Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds168Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds16Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds176Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds184Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds192Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds200Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds208Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds216Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds224Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds232Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds240Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds248Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds24Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds32Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds40Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds48Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds56Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds64Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds72Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds80Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds88Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds8Bits",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "SafeCast__Exceeds96Bits",
+			"type": "error"
+		}
+	]
+}

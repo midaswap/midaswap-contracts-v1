@@ -1,0 +1,53 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "PackedUint24Math__AddOverflow",
+				"type": "error"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"title": "Packed Uint128 Math Library",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "This library contains functions to encode and decode two uint128 into a single bytes32 and interact with the encoded bytes32.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Midas_testV1.2/src/libraries/PackedUint24Math.sol": "PackedUint24Math"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Midas_testV1.2/src/libraries/PackedUint24Math.sol": {
+			"keccak256": "0xc836f0a2fa4f5e6f327b3ad3c2e7c2455317cff4aaa07cbac93ca5d91d5aefec",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5e8aa2b1d5f6972348d5f3987a8d5456c4c0d8ab788ff783e5a895ab5b664750",
+				"dweb:/ipfs/QmdSfVic7GHnc3CNfGDnD8bLaLEGfjTT5yKS4TT5AgzneE"
+			]
+		}
+	},
+	"version": 1
+}

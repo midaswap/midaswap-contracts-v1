@@ -1,0 +1,58 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "Math512Bits__MulDivOverflow",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "Math512Bits__MulShiftOverflow",
+				"type": "error"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"title": "Midas 512bits Math Library",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Helper contract used for full precision calculations",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Midas_testV1.2/src/libraries/Math512Bits.sol": "Math512Bits"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 0
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Midas_testV1.2/src/libraries/Math512Bits.sol": {
+			"keccak256": "0xfc1632b655a18445b31f8f34ad44a4b94e50399300c49fc11a3d148cc13c6ceb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://cf24e690b92be6f72cc89f91f8443f7617817b3bafbe7b4db3992bd75b8e32dd",
+				"dweb:/ipfs/QmfRrhDC3JtCgCwZrEupyQbx3av7U2JhiZUCJPL3RdZy8E"
+			]
+		}
+	},
+	"version": 1
+}

@@ -1,0 +1,48 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"author": "midaswap",
+			"kind": "dev",
+			"methods": {},
+			"title": "Midas ",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Helper contract used for calculating swaps, fees and reserves changes",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Midas_testV1.2/src/libraries/SwapHelper.sol": "SwapHelper"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Midas_testV1.2/src/libraries/SwapHelper.sol": {
+			"keccak256": "0xb4446f0959a7d6c49b1c2413efaddc81ea14973782327b9e2ecc6ae665fae6a0",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://223ead6b0d4140962a8477eb4dcbaeeb7b2417c8cf42ae527f069e5403896795",
+				"dweb:/ipfs/QmdAsYUV1zexTtY7imPJVeic81iutVatphEQvBK5ynMQA7"
+			]
+		}
+	},
+	"version": 1
+}

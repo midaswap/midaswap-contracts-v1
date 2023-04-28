@@ -1,0 +1,45 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Midas_testV1.2/src/libraries/PriceHelper.sol": "PriceHelper"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 100
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Midas_testV1.2/src/libraries/PriceHelper.sol": {
+			"keccak256": "0xdeedfc4175b686228a4b3770ca8687b0091a59d45c903ed6ba0c964dabde71a2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://76800cf62d68746ec5f5b2b0a96fd17ef669d701b1dc8099b8b724416cf2dfaf",
+				"dweb:/ipfs/QmaC3nPTwsxfGW2mLvVLgfkLuUoP5HcPhM1rjjB5cqfBHb"
+			]
+		}
+	},
+	"version": 1
+}

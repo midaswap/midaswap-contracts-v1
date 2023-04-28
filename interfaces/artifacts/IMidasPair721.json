@@ -1,0 +1,699 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"burn(uint128,address,address)": "03f124b1",
+			"buyNFT(uint256,address)": "d8db47a7",
+			"collectLPFees(uint128,address)": "f069977e",
+			"collectProtocolFees()": "a1af5b9a",
+			"collectRoyaltyFees()": "0ae645bc",
+			"factory()": "c45a0155",
+			"feeParameters()": "98c7adf3",
+			"getBin(uint24)": "0abe9688",
+			"getBinParamFromLP(uint128,uint256)": "0c8cc759",
+			"getGlobalFees()": "a582cdaa",
+			"getIDs()": "d55d113d",
+			"getLPFromNFT(uint256)": "c88dd271",
+			"getLpInfos(uint128)": "0c503e9e",
+			"getPriceFromBin(uint24)": "fd31c4ab",
+			"getReserves()": "0902f1ac",
+			"mintFT(uint24[],address)": "a3d055a7",
+			"mintNFT(uint24[],uint256[],address,bool)": "d1ad1fae",
+			"sellNFT(uint256,address)": "5728ad49",
+			"tokenX()": "16dc165b",
+			"tokenY()": "b7d19fc4",
+			"updateRoyalty(uint128,address[],uint256[])": "ae3c0a92"
+		}
+	},
+	"abi": [
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "nftTokenId",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "from",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint24",
+					"name": "tradeBin",
+					"type": "uint24"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint128",
+					"name": "lpTokenID",
+					"type": "uint128"
+				}
+			],
+			"name": "BuyNFT",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint128",
+					"name": "lpTokenId",
+					"type": "uint128"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "owner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "feeCollected",
+					"type": "uint256"
+				}
+			],
+			"name": "ClaimFee",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint128",
+					"name": "lpTokenId",
+					"type": "uint128"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint24",
+					"name": "binLower",
+					"type": "uint24"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint24",
+					"name": "binStep",
+					"type": "uint24"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "binAmount",
+					"type": "uint256"
+				}
+			],
+			"name": "ERC20PositionMinted",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint128",
+					"name": "lpTokenId",
+					"type": "uint128"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint24",
+					"name": "binLower",
+					"type": "uint24"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint24",
+					"name": "binStep",
+					"type": "uint24"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256[]",
+					"name": "_NFTIDs",
+					"type": "uint256[]"
+				}
+			],
+			"name": "ERC721PositionMinted",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint128",
+					"name": "lpTokenId",
+					"type": "uint128"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "owner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint128",
+					"name": "feeCollected",
+					"type": "uint128"
+				}
+			],
+			"name": "PositionBurned",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "nftTokenId",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "from",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint24",
+					"name": "tradeBin",
+					"type": "uint24"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint128",
+					"name": "lpTokenID",
+					"type": "uint128"
+				}
+			],
+			"name": "SellNFT",
+			"type": "event"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint128",
+					"name": "LPtokenID",
+					"type": "uint128"
+				},
+				{
+					"internalType": "address",
+					"name": "_nftReceiver",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				}
+			],
+			"name": "burn",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "amountY",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "NFTID",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_to",
+					"type": "address"
+				}
+			],
+			"name": "buyNFT",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint128",
+					"name": "LPtokenID",
+					"type": "uint128"
+				},
+				{
+					"internalType": "address",
+					"name": "_to",
+					"type": "address"
+				}
+			],
+			"name": "collectLPFees",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "amountFee",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "collectProtocolFees",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "amountY",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "collectRoyaltyFees",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "amountY",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "factory",
+			"outputs": [
+				{
+					"internalType": "contract IMidasFactory721",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "feeParameters",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "",
+					"type": "uint128"
+				},
+				{
+					"internalType": "uint128",
+					"name": "",
+					"type": "uint128"
+				},
+				{
+					"internalType": "uint128",
+					"name": "",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint24",
+					"name": "id",
+					"type": "uint24"
+				}
+			],
+			"name": "getBin",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "reserveX",
+					"type": "uint128"
+				},
+				{
+					"internalType": "uint128",
+					"name": "reserveY",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint128",
+					"name": "_lpTokenID",
+					"type": "uint128"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_amount",
+					"type": "uint256"
+				}
+			],
+			"name": "getBinParamFromLP",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "_totalPrice",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getGlobalFees",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "feesYTotal",
+					"type": "uint128"
+				},
+				{
+					"internalType": "uint128",
+					"name": "feesYProtocol",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getIDs",
+			"outputs": [
+				{
+					"internalType": "uint24",
+					"name": "floorPriceID",
+					"type": "uint24"
+				},
+				{
+					"internalType": "uint24",
+					"name": "bestOfferID",
+					"type": "uint24"
+				},
+				{
+					"internalType": "uint128",
+					"name": "currentPositionID",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_NFTID",
+					"type": "uint256"
+				}
+			],
+			"name": "getLPFromNFT",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "_LPtoken",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint128",
+					"name": "_LPtokenID",
+					"type": "uint128"
+				}
+			],
+			"name": "getLpInfos",
+			"outputs": [
+				{
+					"internalType": "uint24",
+					"name": "originBin",
+					"type": "uint24"
+				},
+				{
+					"internalType": "uint24",
+					"name": "binStep",
+					"type": "uint24"
+				},
+				{
+					"internalType": "uint128",
+					"name": "_fee",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint24",
+					"name": "_id",
+					"type": "uint24"
+				}
+			],
+			"name": "getPriceFromBin",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "_Price",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getReserves",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "reserveX",
+					"type": "uint128"
+				},
+				{
+					"internalType": "uint128",
+					"name": "reserveY",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint24[]",
+					"name": "ids",
+					"type": "uint24[]"
+				},
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				}
+			],
+			"name": "mintFT",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "amountIn",
+					"type": "uint128"
+				},
+				{
+					"internalType": "uint128",
+					"name": "LPtokenID",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint24[]",
+					"name": "ids",
+					"type": "uint24[]"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "NFTIDs",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"internalType": "bool",
+					"name": "isLimited",
+					"type": "bool"
+				}
+			],
+			"name": "mintNFT",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "number",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint128",
+					"name": "LPtokenID",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "NFTID",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_to",
+					"type": "address"
+				}
+			],
+			"name": "sellNFT",
+			"outputs": [
+				{
+					"internalType": "uint128",
+					"name": "_amountOut",
+					"type": "uint128"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "tokenX",
+			"outputs": [
+				{
+					"internalType": "contract IERC721",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "tokenY",
+			"outputs": [
+				{
+					"internalType": "contract IERC20",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint128",
+					"name": "_newRate",
+					"type": "uint128"
+				},
+				{
+					"internalType": "address payable[]",
+					"name": "newrecipients",
+					"type": "address[]"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "newshares",
+					"type": "uint256[]"
+				}
+			],
+			"name": "updateRoyalty",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}

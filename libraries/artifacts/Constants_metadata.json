@@ -1,0 +1,48 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"author": "midaswap",
+			"kind": "dev",
+			"methods": {},
+			"title": "Midas ",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Set of constants for Midas contracts",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Midas_testV1.2/src/libraries/Constants.sol": "Constants"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Midas_testV1.2/src/libraries/Constants.sol": {
+			"keccak256": "0xb9cae560a036555734c0066a3b957202cb9d9d6c32020b6fe3029d532a3873ae",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4b854b5eca6fcfe433abc64e0563c66db8f857bc9778cded08bb1160acf446cb",
+				"dweb:/ipfs/QmNZUQ3q8N4kNMnCvfAjcHjSCD6UdPPdk9WGLusriLnC5Z"
+			]
+		}
+	},
+	"version": 1
+}
