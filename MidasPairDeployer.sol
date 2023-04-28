@@ -32,7 +32,9 @@ contract PairDeployer {
             new LPToken{salt: keccak256(abi.encode(_token0, _token1))}(
                 "MidasLPToken",
                 "MLPT",
-                factory
+                factory,
+                _token0,
+                _token1
             )
         );
         _pair = address(
