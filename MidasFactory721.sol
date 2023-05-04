@@ -71,26 +71,28 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
             _token1,
             feeEnabled
         );
-        (
-            address payable[] memory _recipients,
-            uint256[] memory _shares
-        ) = royaltyEngine.getRoyaltyView(_token0, 1, 1e18);
-        if (_shares.length > 0) {
-            uint256 _shareSum;
-            for (uint256 i = 0; i < _shares.length; ++i) {
-                _shareSum += _shares[i];
-            }
-            for (uint256 i = 0; i < _shares.length; ++i) {
-                _shares[i] = (_shares[i] * 1e18) / _shareSum - 1;
-            }
-            IMidasPair721(pair).updateRoyalty(
-                royaltyRate,
-                _recipients,
-                _shares
-            );
-        } else {
-            IMidasPair721(pair).updateRoyalty(uint128(0), _recipients, _shares);
-        }
+
+        _setRoyaltyInfo(_token0, pair);
+        // (
+        //     address payable[] memory _recipients,
+        //     uint256[] memory _shares
+        // ) = royaltyEngine.getRoyaltyView(_token0, 1, 1e18);
+        // if (_shares.length > 0) {
+        //     uint256 _shareSum;
+        //     for (uint256 i = 0; i < _shares.length; ++i) {
+        //         _shareSum += _shares[i];
+        //     }
+        //     for (uint256 i = 0; i < _shares.length; ++i) {
+        //         _shares[i] = (_shares[i] * 1e18) / _shareSum - 1;
+        //     }
+        //     IMidasPair721(pair).updateRoyalty(
+        //         royaltyRate,
+        //         _recipients,
+        //         _shares
+        //     );
+        // } else {
+        //     IMidasPair721(pair).updateRoyalty(uint128(0), _recipients, _shares);
+        // }
 
         LPToken(lpToken).initialize(pair);
         getPairERC721[_token0][_token1] = pair;
@@ -105,29 +107,31 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         owner = _owner;
     }
 
-    /// @dev The function to change the royalty rate of specific rate
-    /// @param _nftAddress  The address of NFT asset
-    /// @param _pair        The address of Midas pair
-    /// @param _newRate     The new royalty rate
-    function setRoyaltyInfo(
+    function _setRoyaltyInfo(
         address _nftAddress,
-        address _pair,
-        uint128 _newRate
-    ) external {
-        require(msg.sender == owner);
-        royaltyRate = _newRate;
+        address _pair
+        // uint128 _newRate
+    ) internal {
+        // require(msg.sender == owner);
+        // royaltyRate = _newRate;
         (
             address payable[] memory _recipients,
             uint256[] memory _shares
         ) = royaltyEngine.getRoyaltyView(_nftAddress, 1, 1e18);
 
-        if (_shares.length > 0) {
+        if (_shares.length != 0) {
             uint256 _shareSum;
-            for (uint256 i = 0; i < _shares.length; ++i) {
+            for (uint256 i ; i < _shares.length; ) {
                 _shareSum += _shares[i];
+                unchecked{
+                    ++i;
+                }
             }
-            for (uint256 i = 0; i < _shares.length; ++i) {
+            for (uint256 i ; i < _shares.length; ) {
                 _shares[i] = (_shares[i] * 1e18) / _shareSum - 1;
+                unchecked{
+                    ++i;
+                }
             }
             IMidasPair721(_pair).updateRoyalty(
                 royaltyRate,
@@ -142,4 +146,20 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
             );
         }
     }
+
+    function setNewRoyaltyRate(
+        uint128 _newRate
+    ) external {
+        require(msg.sender == owner);
+        royaltyRate = _newRate;
+    }
+
+    function setRoyaltyInfo(
+        address _nftAddress,
+        address _pair
+    ) external {
+        _setRoyaltyInfo(_nftAddress, _pair);
+    }
+
+
 }
