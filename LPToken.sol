@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.8.0;
+pragma solidity 0.8.10;
 
 import {ERC721} from "../libraries/ERC721.sol";
 import {Strings} from "../libraries/Strings.sol";
