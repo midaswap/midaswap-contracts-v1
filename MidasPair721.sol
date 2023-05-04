@@ -2,30 +2,28 @@
 
 pragma solidity 0.8.10;
 
-import "./LPToken.sol";
-import "./MidasErrors.sol";
+import {LPToken} from "./LPToken.sol";
 
-import "./libraries/BitMath.sol";
-import "./libraries/Constants.sol";
-import "./libraries/Encoded.sol";
-import "./libraries/FeeHelper.sol";
-import "./libraries/Math128x128.sol";
-import "./libraries/Math512Bits.sol";
-import "./libraries/PackedUint128Math.sol";
-import "./libraries/PackedUint24Math.sol";
-import "./libraries/PositionHelper.sol";
-import "./libraries/ReentrancyGuardUpgradeable.sol";
-import "./libraries/SafeCast.sol";
-import "./libraries/TokenHelper.sol";
-import "./libraries/TreeMath.sol";
-import "./interfaces/IMidasPair721.sol";
-import "./interfaces/IMidasFactory721.sol";
+import {BitMath} from "./libraries/BitMath.sol";
+import {Constants} from "./libraries/Constants.sol";
+import {Encoded} from "./libraries/Encoded.sol";
+import {FeeHelper} from "./libraries/FeeHelper.sol";
+import {Uint128x128Math} from "./libraries/Math128x128.sol";
+import {Math512Bits} from "./libraries/Math512Bits.sol";
+import {PackedUint128Math} from "./libraries/PackedUint128Math.sol";
+import {PackedUint24Math} from "./libraries/PackedUint24Math.sol";
+import {PositionHelper} from "./libraries/PositionHelper.sol";
+import {ReentrancyGuardUpgradeable} from "./libraries/ReentrancyGuardUpgradeable.sol";
+import {TokenHelper} from "./libraries/TokenHelper.sol";
+import {TreeMath} from "./libraries/TreeMath.sol";
+import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
+import {IMidasFactory721} from "./interfaces/IMidasFactory721.sol";
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {ERC721Holder} from "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 /// @title Midas Pair
 /// @author midaswap
@@ -35,7 +33,15 @@ contract MidasPair721 is
     ERC721Holder,
     ReentrancyGuardUpgradeable,
     IMidasPair721
-{
+{   
+    error MidasPair__AddressWrong();
+    error MidasPair__RangeWrong();
+    error MidasPair__AmountInWrong();
+    error MidasPair__BinSequenceWrong();
+    error MidasPair__LengthWrong();
+    error MidasPair__NFTOwnershipWrong();
+    error MidasPair__PriceOverflow();
+
     using Math512Bits for uint256;
     using TreeMath for TreeMath.TreeUint24;
     using TokenHelper for IERC20;
@@ -211,15 +217,12 @@ contract MidasPair721 is
         _checkNFTOwner(NFTID);
         assetLPMap[NFTID] = _LPtokenID;
 
-        ////////////////////////////////////////////////////////////////////////////////////
-
         // update _RoyaltyInfo
         _royaltyInfo = PackedUint128Math.addSecond(_royaltyInfo, _feesRoyalty);
         _RoyaltyInfo = _royaltyInfo;
 
         _updateAssetMapSell(_LPtokenID, _tradeID, NFTID);
 
-        ////////////////////////////////////////////////////////////////////////////////////
         _updateLpInfo(_LPtokenID, _feesTotal - _feesProtocol);
         // update _Fees
         bytes32 _fees = _Fees;
@@ -257,7 +260,6 @@ contract MidasPair721 is
         bytes32 _reserves = _Reserves;
         bytes32 _fees = _Fees;
 
-        if (PackedUint128Math.decodeX(_bin) == 1e18) _tree2.remove(_tradeId);
         uint128 _amountInToBin = _getPriceFromBin(_tradeId);
         (
             uint128 _feesTotal,
@@ -298,8 +300,10 @@ contract MidasPair721 is
             _bin = _bin.subFirst(1e18);
         }
 
+        //update trees
+        if (PackedUint128Math.decodeX(_bin) == type(uint128).min) _tree2.remove(_tradeId);
+        
         _updateIDs(type(uint128).min);
-
         _bins[_tradeId] = _bin;
         _RoyaltyInfo = _royaltyInfo;
         _Reserves = _reserves;
@@ -354,10 +358,12 @@ contract MidasPair721 is
             }
         }
         bytes32 _reserves = _Reserves;
-        _reserves = PackedUint128Math.addFirst(
-            _reserves,
-            uint128(_length) * 1e18
-        );
+        unchecked{
+            _reserves = PackedUint128Math.addFirst(
+                _reserves,
+                uint128(_length) * 1e18
+            );
+        }
         _Reserves = _reserves;
 
         _updateIDs(currentPositionID);
@@ -473,7 +479,7 @@ contract MidasPair721 is
 
                 _bin = PackedUint128Math.subFirst(_bin, 1e18);
                 unchecked {
-                    amountX += 1e18;
+                    ++amountX;
                 }
 
                 if (PackedUint128Math.decodeX(_bin) == type(uint128).min)
@@ -501,7 +507,9 @@ contract MidasPair721 is
         }
 
         bytes32 _reserves = _Reserves;
-        _reserves = _reserves.sub(amountX, amountY);
+        unchecked{
+            _reserves = _reserves.sub(amountX * 1e18, amountY);
+        }
         _Reserves = _reserves;
 
         _updateIDs(type(uint128).min);
