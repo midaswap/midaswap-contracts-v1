@@ -34,8 +34,7 @@ interface IMidasFactory721 {
  
     function setRoyaltyInfo(
         address _nftAddress,
-        address _pair,
-        uint128 _newRate
+        address _pair
     ) external;
 
 }
