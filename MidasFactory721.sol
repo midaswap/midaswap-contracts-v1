@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-import "./LPToken.sol";
-import "./MidasPair721.sol";
-import "./NoDelegateCall.sol";
-import "./MidasPairDeployer.sol";
+import {LPToken} from "./LPToken.sol";
+import {MidasPair721} from "./MidasPair721.sol";
+import {NoDelegateCall} from "./NoDelegateCall.sol";
+import {PairDeployer} from "./MidasPairDeployer.sol";
 
-import "./interfaces/IMidasPair721.sol";
-import "./interfaces/IMidasFactory721.sol";
-import "./interfaces/IRoyaltyEngineV1.sol";
+import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
+import {IMidasFactory721} from "./interfaces/IMidasFactory721.sol";
+import {IRoyaltyEngineV1} from "./interfaces/IRoyaltyEngineV1.sol";
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
 /// @title Midas Pair Factory
 /// @author midaswap
