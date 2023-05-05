@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.10;
 
-import "./BitMath.sol";
-import "./Constants.sol";
+import {BitMath} from "./BitMath.sol";
+import {Constants} from "./Constants.sol";
 
 /// @title Midas
 /// @author midaswap
