@@ -2,10 +2,9 @@
 
 pragma solidity 0.8.10;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "../libraries/FeeHelper.sol";
-import "./IMidasFactory721.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IMidasFactory721} from "./IMidasFactory721.sol";
 
 /// @title Midas Pair Interface
 /// @author midaswap
