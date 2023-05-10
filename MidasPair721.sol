@@ -479,7 +479,7 @@ contract MidasPair721 is
 
                 _bin = PackedUint128Math.subFirst(_bin, 1e18);
                 unchecked {
-                    ++amountX;
+                    amountX += 1e18;
                 }
 
                 if (PackedUint128Math.decodeX(_bin) == type(uint128).min)
@@ -508,7 +508,7 @@ contract MidasPair721 is
 
         bytes32 _reserves = _Reserves;
         unchecked{
-            _reserves = _reserves.sub(amountX * 1e18, amountY);
+            _reserves = _reserves.sub(amountX, amountY);
         }
         _Reserves = _reserves;
 
