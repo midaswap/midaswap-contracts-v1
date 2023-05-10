@@ -22,8 +22,6 @@ import {IMidasFactory721} from "./interfaces/IMidasFactory721.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {ERC721Holder} from "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-// import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-// import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 /// @title Midas Pair
 /// @author midaswap
@@ -634,23 +632,11 @@ contract MidasPair721 is
         _IDs = _ids;
     }
 
-    // function _updateReserves(uint128 amountX) internal {
-    //     bytes32 _reserves = _Reserves;
-    //     _reserves =  PackedUint128Math.addFirst(_reserves , amountX);
-    //     _Reserves = _reserves;
-    // }
-
     function _updateFees(uint128 amountX) internal {
         bytes32 _fees = _Fees;
         _fees = PackedUint128Math.subFirst(_fees, amountX);
         _Fees = _fees;
     }
-
-    // function _updateRoyaltyFees(uint128 amountY) internal {
-    //     bytes32 _royaltyInfo = _RoyaltyInfo;
-    //     _royaltyInfo = PackedUint128Math.addSecond(_royaltyInfo , amountY);
-    //     _RoyaltyInfo = _royaltyInfo;
-    // }
 
     function _updateLpInfo(uint128 _lpToken, uint128 amountY) internal {
         bytes32 _info = lpInfos[_lpToken];
@@ -713,56 +699,4 @@ contract MidasPair721 is
         }
         lpTokenAssetsMap[_lpTokenID][_index] = _NFTID;
     }
-
-    // function _updateAssetMap(
-    //     uint128 _lpTokenID,
-    //     bool _toNFT,
-    //     uint24 _tradeID,
-    //     uint256 _NFTID
-    // ) internal returns (uint24 _currentID) {
-    //     uint[] memory _map = lpTokenAssetsMap[_lpTokenID];
-    //     (uint24 _start, uint24 _binStep) = PackedUint24Math.getBothUint24(lpInfos[_lpTokenID]);
-    //     if (!_toNFT ) {
-    //         uint24 _index;
-    //         uint temp = MAX;
-    //         for(uint24 i ; i < _map.length ; ){
-    //             uint asset = _map[i];
-    //             if(asset != MAX){
-    //                 if(temp == MAX){
-    //                     temp = asset;
-    //                     _index = i;
-    //                     _map[i] = MAX;
-    //                     if(temp == _NFTID) break;
-    //                 }
-    //                 if(asset == _NFTID){
-    //                     _map[i] = temp;
-    //                     break;
-    //                 }
-    //             }
-    //             unchecked{
-    //                 ++i;
-    //             }
-    //         }
-    //         lpTokenAssetsMap[_lpTokenID] = _map;
-    //         unchecked {
-    //             _currentID = _index * _binStep + _start;
-    //         }
-    //     } else {
-    //         uint24 _index;
-    //         if (_binStep != type(uint24).min){
-    //             unchecked {
-    //                 _index = (_tradeID - _start) / _binStep;
-    //             }
-    //         }else{
-    //             while (_map[_index] != MAX) {
-    //                 unchecked {
-    //                     ++_index;
-    //                 }
-    //             }
-    //         }
-    //         lpTokenAssetsMap[_lpTokenID][_index] = _NFTID;
-    //         // _currentID = _tradeID;
-    //     }
-
-    // }
 }
