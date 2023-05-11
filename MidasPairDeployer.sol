@@ -2,7 +2,8 @@
 
 pragma solidity 0.8.10;
 
-import "./MidasPair721.sol";
+import {MidasPair721} from "./MidasPair721.sol";
+import {LPToken} from "./LPToken.sol";
 
 /// @title Midas Pair Deployer
 /// @author midaswap
