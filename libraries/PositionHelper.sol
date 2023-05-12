@@ -22,7 +22,7 @@ library PositionHelper {
 
     function _removeFirstItem(
         uint128[] memory arr
-    ) public pure returns (uint128[] memory) {
+    ) internal pure returns (uint128[] memory) {
         uint128[] memory newArr;
         newArr = new uint128[](arr.length - 1);
         for (uint256 i; i < newArr.length; ) {
