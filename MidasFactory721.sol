@@ -1,14 +1,14 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.10;
 
-import {LPToken} from "./LPToken.sol";
 import {MidasPair721} from "./MidasPair721.sol";
 import {NoDelegateCall} from "./NoDelegateCall.sol";
-import {PairDeployer} from "./MidasPairDeployer.sol";
 
+import {ILPToken} from "./interfaces/ILPToken.sol";
 import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
 import {IMidasFactory721} from "./interfaces/IMidasFactory721.sol";
 import {IRoyaltyEngineV1} from "./interfaces/IRoyaltyEngineV1.sol";
+import {ImmutableClone} from "./libraries/ImmutableClone.sol";
 
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
@@ -18,11 +18,13 @@ import {IERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions
 /// @notice Deploys Midaswap pairs and manages ownership
 
 contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
+
     address private owner;
+    address private pairImplementation;
+    address private lptImplementation;
     uint128 private feeEnabled;
     uint128 private royaltyRate;
 
-    PairDeployer private pairDeployer;
     IRoyaltyEngineV1 private royaltyEngine;
 
     mapping(address => mapping(address => address))
@@ -35,8 +37,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     constructor(
         uint128 _feeRate,
         uint128 _royaltyRate,
-        address _royaltyEngine,
-        address _deployer
+        address _royaltyEngine
     ) {
         owner = msg.sender;
         emit OwnerChanged(address(0), msg.sender);
@@ -46,8 +47,6 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
         royaltyRate = _royaltyRate;
         royaltyEngine = IRoyaltyEngineV1(_royaltyEngine);
-
-        pairDeployer = PairDeployer(_deployer);
     }
 
     function feeRecipient() external view returns (address _feeRecipient) {
@@ -59,22 +58,31 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     /// @param _token1  The second input token address
     /// @return lpToken The address of lpToken
     /// @return pair    The address of Midas pair
-    function createERC721Pair(
-        address _token0,
-        address _token1
-    ) external override noDelegateCall returns (address lpToken, address pair) {
+    function createERC721Pair(address _token0, address _token1)
+        external
+        override
+        noDelegateCall
+        returns (address lpToken, address pair)
+    {
         require(_token0 != _token1 && _token1 != address(0));
         require(IERC721(_token0).supportsInterface(bytes4(0x80ac58cd)));
         require(getPairERC721[_token0][_token1] == address(0));
-        (lpToken, pair) = pairDeployer.deployERC721(
-            _token0,
-            _token1,
-            feeEnabled
+
+        lpToken = ImmutableClone.cloneDeterministic(
+            lptImplementation,
+            "",
+            keccak256(abi.encode(_token0, _token1, address(this)))
+        );
+
+        pair = ImmutableClone.cloneDeterministic(
+            pairImplementation,
+            abi.encodePacked(_token0, _token1, lpToken, feeEnabled),
+            keccak256(abi.encode(_token0, _token1, lpToken, feeEnabled))
         );
 
         _setRoyaltyInfo(_token0, pair);
+        ILPToken(lpToken).initialize(pair, _token0, _token1);
 
-        LPToken(lpToken).initialize(pair);
         getPairERC721[_token0][_token1] = pair;
         getLPTokenERC721[_token0][_token1] = lpToken;
 
@@ -87,13 +95,9 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         owner = _owner;
     }
 
-    function _setRoyaltyInfo(
-        address _nftAddress,
-        address _pair
-    ) internal // uint128 _newRate
+    function _setRoyaltyInfo(address _nftAddress, address _pair)
+        internal
     {
-        // require(msg.sender == owner);
-        // royaltyRate = _newRate;
         (
             address payable[] memory _recipients,
             uint256[] memory _shares
@@ -133,7 +137,26 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     }
 
     function setRoyaltyInfo(address _nftAddress, address _pair) external {
-        require(msg.sender == owner);
         _setRoyaltyInfo(_nftAddress, _pair);
+    }
+
+    function setPairImplementation(address _newPairImplementation) external {
+        require(msg.sender == owner && pairImplementation != _newPairImplementation);
+        address _oldPairImplementation = pairImplementation;
+        pairImplementation = _newPairImplementation;
+        emit PairImplementationSet(
+            _oldPairImplementation,
+            _newPairImplementation
+        );
+    }
+
+    function setLptImplementation(address _newLptImplementation) external {
+        require(msg.sender == owner && lptImplementation != _newLptImplementation);
+        address _oldLptImplementation = lptImplementation;
+        lptImplementation = _newLptImplementation;
+        emit LptImplementationSet(
+            _oldLptImplementation, 
+            _newLptImplementation
+        );
     }
 }
