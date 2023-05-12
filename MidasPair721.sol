@@ -728,15 +728,15 @@ contract MidasPair721 is
     }
 
     function tokenY() private pure returns(IERC20){
-        return IERC20(_getArgAddress(0));
+        return IERC20(_getArgAddress(20));
     }
 
     function lpToken() private pure returns(LPToken){
-        return LPToken(_getArgAddress(0));
+        return LPToken(_getArgAddress(40));
     }
 
     function _rate() private pure returns(uint128){
-        return _getArgUint128(0);
+        return _getArgUint128(60);
     }
 
 
