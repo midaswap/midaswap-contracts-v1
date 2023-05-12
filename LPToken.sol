@@ -1,50 +1,55 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {ERC721} from "./libraries/ERC721.sol";
 import {Strings} from "./libraries/Strings.sol";
+import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
+
+/// @title Midas LP Token
+/// @author midaswap
+/// @notice Non-fungible token which wraps the positions of LPs
 
 contract LPToken is ERC721 {
+
     using Strings for uint256;
     using Strings for address;
 
     // Pair address
     address private pair;
-
     // Factory address
     address private factory;
-
     // Token X address
     address private tokenX;
-
     // Token Y address
     address private tokenY;
+    // Maintain State of LPT contract
+    bool private initialized;
 
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        address _factory,
+    constructor(address _factory) ERC721("Midas LP Token", "MLPT") {
+        factory = _factory;
+        initialized = false;
+    }
+
+    function initialize(
+        address _pair,
         address _tokenX,
         address _tokenY
-    ) ERC721(_name, _symbol) {
-        factory = _factory;
+    ) external virtual {
+        require(msg.sender == factory);
+        require(initialized == false);
+        pair = _pair;
         tokenX = _tokenX;
         tokenY = _tokenY;
+        initialized = true;
     }
 
-    modifier onlyPair() {
-        require(msg.sender == pair);
-        _;
-    }
-
-    function initialize(address _pair) external virtual {
-        require(msg.sender == factory);
-        pair = _pair;
-    }
-
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         require(_ownerOf[tokenId] != address(0));
         string memory baseURI = _baseURI();
         return
@@ -75,4 +80,8 @@ contract LPToken is ERC721 {
     function _baseURI() internal view virtual returns (string memory) {
         return "www.midaswap.org/";
     }
+
+    // function getReserves(uint256 tokenId) external view virtual returns (uint256 xReserves, uint256 yReserves) {
+    //     (xReserves, yReserves) = IMidasPair721(pair).getLpReserves(tokenId);
+    // }
 }
