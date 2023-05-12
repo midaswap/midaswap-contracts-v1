@@ -67,8 +67,9 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         require(IERC721(_token0).supportsInterface(bytes4(0x80ac58cd)));
         require(getPairERC721[_token0][_token1] == address(0));
 
-        lpToken = ImmutableClone.simpleClone(
+        lpToken = ImmutableClone.cloneDeterministic(
             lptImplementation,
+            "",
             keccak256(abi.encode(_token0, _token1, address(this)))
         );
 
@@ -137,19 +138,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     function setRoyaltyInfo(address _nftAddress, address _pair) external {
         _setRoyaltyInfo(_nftAddress, _pair);
     }
-
-    function _createClone(address target, bytes32 salt) internal pure returns (address result) {
-        bytes20 targetBytes = bytes20(target);
-        assembly {
-            let clone := mload(0x40)
-            mstore(clone, 0x3d602d80600a3d3981f3)
-            mstore(add(clone, 0x14), targetBytes)
-            mstore(add(clone, 0x28), 0x5af43d82803e903d91602b57fd5bf3)
-            mstore(add(clone, 0x3C), salt)
-            result := add(clone, 0x14)
-        }
-    }
-
+    
     function setPairImplementation(address _newPairImplementation) external {
         require(msg.sender == owner && pairImplementation != _newPairImplementation);
         address _oldPairImplementation = pairImplementation;
