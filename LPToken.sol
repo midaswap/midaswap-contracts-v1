@@ -35,7 +35,6 @@ contract LPToken is ERC721 {
         address _tokenX,
         address _tokenY
     ) external virtual {
-        require(msg.sender == factory);
         require(initialized == false);
         pair = _pair;
         tokenX = _tokenX;
