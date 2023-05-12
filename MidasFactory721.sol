@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import {MidasPair721} from "./MidasPair721.sol";
+import {LPToken} from "./LPToken.sol";
 import {NoDelegateCall} from "./NoDelegateCall.sol";
 
-import {ILPToken} from "./interfaces/ILPToken.sol";
 import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
 import {IMidasFactory721} from "./interfaces/IMidasFactory721.sol";
 import {IRoyaltyEngineV1} from "./interfaces/IRoyaltyEngineV1.sol";
@@ -68,9 +67,8 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         require(IERC721(_token0).supportsInterface(bytes4(0x80ac58cd)));
         require(getPairERC721[_token0][_token1] == address(0));
 
-        lpToken = ImmutableClone.cloneDeterministic(
+        lpToken = ImmutableClone.simpleClone(
             lptImplementation,
-            "",
             keccak256(abi.encode(_token0, _token1, address(this)))
         );
 
@@ -81,7 +79,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         );
 
         _setRoyaltyInfo(_token0, pair);
-        ILPToken(lpToken).initialize(pair, _token0, _token1);
+        LPToken(lpToken).initialize(pair, _token0, _token1);
 
         getPairERC721[_token0][_token1] = pair;
         getLPTokenERC721[_token0][_token1] = lpToken;
@@ -138,6 +136,18 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
     function setRoyaltyInfo(address _nftAddress, address _pair) external {
         _setRoyaltyInfo(_nftAddress, _pair);
+    }
+
+    function _createClone(address target, bytes32 salt) internal pure returns (address result) {
+        bytes20 targetBytes = bytes20(target);
+        assembly {
+            let clone := mload(0x40)
+            mstore(clone, 0x3d602d80600a3d3981f3)
+            mstore(add(clone, 0x14), targetBytes)
+            mstore(add(clone, 0x28), 0x5af43d82803e903d91602b57fd5bf3)
+            mstore(add(clone, 0x3C), salt)
+            result := add(clone, 0x14)
+        }
     }
 
     function setPairImplementation(address _newPairImplementation) external {
