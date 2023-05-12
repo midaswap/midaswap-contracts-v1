@@ -11,34 +11,43 @@ import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
 
 contract LPToken is ERC721 {
 
+    string public name;
+    string public symbol;
+
     using Strings for uint256;
     using Strings for address;
 
-    // Pair address
-    address private pair;
     // Factory address
-    address private factory;
+    address public immutable factory;
+    // Pair address
+    address public pair;
     // Token X address
-    address private tokenX;
+    address public tokenX;
     // Token Y address
-    address private tokenY;
+    address public tokenY;
     // Maintain State of LPT contract
-    bool private initialized;
+    bool public initialized;
 
-    constructor(address _factory) ERC721("Midas LP Token", "MLPT") {
+    constructor(address _factory) {
         factory = _factory;
         initialized = false;
     }
 
+
     function initialize(
         address _pair,
         address _tokenX,
-        address _tokenY
+        address _tokenY,
+        string calldata _name,
+        string calldata _symbol
     ) external virtual {
+        require(msg.sender == factory);
         require(initialized == false);
         pair = _pair;
         tokenX = _tokenX;
         tokenY = _tokenY;
+        name = _name;
+        symbol = _symbol;
         initialized = true;
     }
 
