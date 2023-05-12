@@ -249,4 +249,16 @@ library ImmutableClone {
             mstore(0x35, mBefore)
         }
     }
+ 
+    function simpleClone(address target, bytes32 salt) external returns (address result) {
+        bytes20 targetBytes = bytes20(target);
+        assembly {
+            let clone := mload(0x40)
+            mstore(clone, 0x3d602d80600a3d3981f3)
+            mstore(add(clone, 0x14), targetBytes)
+            mstore(add(clone, 0x28), 0x5af43d82803e903d91602b57fd5bf3)
+            mstore(add(clone, 0x3C), salt)
+            result := create2(0, clone, 0x37, salt)
+        }
+    }
 }
