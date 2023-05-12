@@ -29,14 +29,15 @@ library TokenHelper {
         uint256 amount
     ) internal {
         if (amount != 0) {
-            bytes memory data = abi.encodeWithSelector(
+            bytes memory data;
+            bytes memory returnData;
+            data = abi.encodeWithSelector(
                 token.transferFrom.selector,
                 owner,
                 recipient,
                 amount
             );
-
-            bytes memory returnData = _callAndCatchError(address(token), data);
+            returnData = _callAndCatchError(address(token), data);
 
             if (returnData.length > 0 && !abi.decode(returnData, (bool)))
                 revert TokenHelper__TransferFailed();
@@ -53,13 +54,14 @@ library TokenHelper {
         uint256 amount
     ) internal {
         if (amount != 0) {
-            bytes memory data = abi.encodeWithSelector(
+            bytes memory data;
+            bytes memory returnData;
+            data = abi.encodeWithSelector(
                 token.transfer.selector,
                 recipient,
                 amount
             );
-
-            bytes memory returnData = _callAndCatchError(address(token), data);
+            returnData = _callAndCatchError(address(token), data);
 
             if (returnData.length > 0 && !abi.decode(returnData, (bool)))
                 revert TokenHelper__TransferFailed();
@@ -86,7 +88,9 @@ library TokenHelper {
         address target,
         bytes memory data
     ) private returns (bytes memory) {
-        (bool success, bytes memory returnData) = target.call(data);
+        bool success;
+        bytes memory returnData;
+        (success, returnData) = target.call(data);
 
         if (success) {
             if (returnData.length == 0 && !_isContract(target))

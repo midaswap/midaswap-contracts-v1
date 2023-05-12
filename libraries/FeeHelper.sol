@@ -18,11 +18,15 @@ library FeeHelper {
         uint128 _rateFee,
         uint128 _rateRoyalty
     ) internal pure returns (uint128, uint128, uint128) {
+        uint256 _fee;
+        uint256 _denominator;
+        uint128 _feeBase;
         unchecked {
-            uint256 _fee = _rateFee + _rateRoyalty;
-            uint256 _denominator = 1e18 + _fee;
+            _fee = _rateFee + _rateRoyalty;
+            _denominator = 1e18 + _fee;
             //in case overflow in uint128 * uint128
-            uint128 _feeBase = _amount -
+            _feeBase =
+                _amount -
                 uint128(
                     (uint256(_amount) * _fee + _denominator - 1) / _denominator
                 );

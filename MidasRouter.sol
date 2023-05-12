@@ -51,8 +51,11 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external override returns (uint256 idAmount, uint128 lpTokenId) {
         if (_deadline < block.timestamp) revert Router__Expired();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        for (uint256 i; i < _tokenIds.length; ) {
+        address _pair;
+        uint256 _length;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _length = _tokenIds.length;
+        for (uint256 i; i < _length; ) {
             IERC721(_tokenX).safeTransferFrom(msg.sender, _pair, _tokenIds[i]);
             unchecked {
                 ++i;
@@ -80,8 +83,10 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external override returns (uint256 idAmount, uint128 lpTokenId) {
         if (_deadline < block.timestamp) revert Router__Expired();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        uint256 _amount = _getAmountsToAdd(_pair, _ids);
+        address _pair;
+        uint256 _amount;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _amount = _getAmountsToAdd(_pair, _ids);
         IERC20(_tokenY).safeTransferFrom(msg.sender, _pair, _amount);
         (idAmount, lpTokenId) = IMidasPair721(_pair).mintFT(_ids, msg.sender);
     }
@@ -94,8 +99,10 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external payable override returns (uint256 idAmount, uint128 lpTokenId) {
         if (_deadline < block.timestamp) revert Router__Expired();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        uint256 _amount = _getAmountsToAdd(_pair, _ids);
+        address _pair;
+        uint256 _amount;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _amount = _getAmountsToAdd(_pair, _ids);
         if (_tokenY != address(weth)) revert Router__WrongPair();
         if (msg.value < _amount) revert Router__WrongAmount();
         _wethDepositAndTransfer(_pair, msg.value);
@@ -115,9 +122,10 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external override returns (uint128 ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
-
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        address _lpToken = factory.getLPTokenERC721(_tokenX, _tokenY);
+        address _pair;
+        address _lpToken;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _lpToken = factory.getLPTokenERC721(_tokenX, _tokenY);
         IERC721(_lpToken).safeTransferFrom(msg.sender, _pair, _lpTokenId);
         (ftAmount) = IMidasPair721(_pair).burn(
             _lpTokenId,
@@ -134,10 +142,11 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external override returns (uint128 ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
-        // require(_tokenY == address(weth), "MIDASROUTER: WRONG PAIR");
         if (_tokenY != address(weth)) revert Router__WrongPair();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        address _lpToken = factory.getLPTokenERC721(_tokenX, _tokenY);
+        address _pair;
+        address _lpToken;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _lpToken = factory.getLPTokenERC721(_tokenX, _tokenY);
         IERC721(_lpToken).safeTransferFrom(msg.sender, _pair, _lpTokenId);
         (ftAmount) = IMidasPair721(_pair).burn(
             _lpTokenId,
@@ -161,8 +170,11 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external override returns (uint128 _ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        for (uint256 i; i < _tokenIds.length; ) {
+        address _pair;
+        uint256 _length;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _length = _tokenIds.length;
+        for (uint256 i; i < _length; ) {
             IERC721(_tokenX).safeTransferFrom(msg.sender, _pair, _tokenIds[i]);
             _ftAmount = IMidasPair721(_pair).sellNFT(_tokenIds[i], msg.sender);
             unchecked {
@@ -180,8 +192,11 @@ contract MidasRouter is IMidasRouter {
     ) external payable override returns (uint128 _ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
         if (_tokenY != address(weth)) revert Router__WrongPair();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        for (uint256 i; i < _tokenIds.length; ) {
+        address _pair;
+        uint256 _length;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _length = _tokenIds.length;
+        for (uint256 i; i < _length; ) {
             IERC721(_tokenX).safeTransferFrom(msg.sender, _pair, _tokenIds[i]);
             _ftAmount = IMidasPair721(_pair).sellNFT(
                 _tokenIds[i],
@@ -208,10 +223,13 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external override returns (uint128 _ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
+        address _pair;
+        uint256 _length;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
         _ftAmount = _getMinAmountIn(_pair, _tokenIds);
+        _length = _tokenIds.length;
         IERC20(_tokenY).safeTransferFrom(msg.sender, _pair, _ftAmount);
-        for (uint256 i; i < _tokenIds.length; ) {
+        for (uint256 i; i < _length; ) {
             IMidasPair721(_pair).buyNFT(_tokenIds[i], msg.sender);
             unchecked {
                 ++i;
@@ -227,12 +245,15 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external payable override returns (uint128 _ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
+        address _pair;
+        uint256 _length;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
         _ftAmount = _getMinAmountIn(_pair, _tokenIds);
+        _length = _tokenIds.length;
         if (_tokenY != address(weth)) revert Router__WrongPair();
         if (msg.value < _ftAmount) revert Router__WrongAmount();
         _wethDepositAndTransfer(_pair, msg.value);
-        for (uint256 i; i < _tokenIds.length; ) {
+        for (uint256 i; i < _length; ) {
             IMidasPair721(_pair).buyNFT(_tokenIds[i], msg.sender);
             unchecked {
                 ++i;
@@ -256,8 +277,11 @@ contract MidasRouter is IMidasRouter {
         uint256 _deadline
     ) external override returns (uint256 idAmount, uint128 lpTokenId) {
         if (_deadline < block.timestamp) revert Router__Expired();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        for (uint i; i < _tokenIds.length; ) {
+        address _pair;
+        uint256 _length;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _length = _tokenIds.length;
+        for (uint256 i; i < _length; ) {
             IERC721(_tokenX).safeTransferFrom(msg.sender, _pair, _tokenIds[i]);
             unchecked {
                 ++i;
@@ -270,7 +294,6 @@ contract MidasRouter is IMidasRouter {
             true
         );
     }
-
 
     /// @notice The function to open multiple limit orders
     /// @param _tokenX        The address of ERC721 assets
@@ -286,18 +309,22 @@ contract MidasRouter is IMidasRouter {
         uint256[] calldata _tokenIds,
         uint256 _deadline
     ) external override returns (uint128[] memory lpTokenIds) {
+        uint256 _length;
+        address _pair;
+        uint24[] memory _id;
+        uint256[] memory _tokenId;
         if (_deadline < block.timestamp) revert Router__Expired();
-        uint256 _length = _tokenIds.length;
+        _length = _tokenIds.length;
         if (_ids.length != _length) revert Router__WrongAmount();
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
         lpTokenIds = new uint128[](_ids.length);
-        uint24[] memory _id = new uint24[](1);
-        uint256[] memory _tokenId = new uint256[](1);
+        _id = new uint24[](1);
+        _tokenId = new uint256[](1);
         for (uint256 i; i < _length; ) {
             IERC721(_tokenX).safeTransferFrom(msg.sender, _pair, _tokenIds[i]);
             _id[0] = _ids[i];
             _tokenId[0] = _tokenIds[i];
-            ( , uint128 lpTokenId) = IMidasPair721(_pair).mintNFT(
+            (, uint128 lpTokenId) = IMidasPair721(_pair).mintNFT(
                 _id,
                 _tokenId,
                 msg.sender,
@@ -320,7 +347,8 @@ contract MidasRouter is IMidasRouter {
         address _tokenY,
         uint128 _lpTokenId
     ) external override returns (uint128 _feeClaimed) {
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
+        address _pair;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
         _feeClaimed = IMidasPair721(_pair).collectLPFees(
             _lpTokenId,
             msg.sender
@@ -337,46 +365,41 @@ contract MidasRouter is IMidasRouter {
         address _tokenY,
         uint128[] calldata _lpTokenIds
     ) external override returns (uint128 _feeClaimed) {
-        address _pair = factory.getPairERC721(_tokenX, _tokenY);
-        for(uint i ; i < _lpTokenIds.length ; ){
+        address _pair;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        for (uint256 i; i < _lpTokenIds.length; ) {
             _feeClaimed += IMidasPair721(_pair).collectLPFees(
-            _lpTokenIds[i],
-            msg.sender
+                _lpTokenIds[i],
+                msg.sender
             );
-            unchecked{
+            unchecked {
                 ++i;
             }
         }
     }
 
-    function getMinAmountIn(address _pair, uint256[] calldata _tokenIds)
-        external
-        view
-        override
-        returns (uint128)
-    {
-        return _getMinAmountIn(_pair , _tokenIds);
+    function getMinAmountIn(
+        address _pair,
+        uint256[] calldata _tokenIds
+    ) external view override returns (uint128) {
+        return _getMinAmountIn(_pair, _tokenIds);
     }
 
-
-    function getAmountsToAdd(address _pair, uint24[] calldata _ids)
-        external
-        pure
-        override
-        returns (uint128)
-    {
-        return _getAmountsToAdd(_pair , _ids);
+    function getAmountsToAdd(
+        address _pair,
+        uint24[] calldata _ids
+    ) external pure override returns (uint128) {
+        return _getAmountsToAdd(_pair, _ids);
     }
 
-    /// @notice The function to get the amount of ERC20 need to transfer 
+    /// @notice The function to get the amount of ERC20 need to transfer
     /// @param _pair        The address of pair
     /// @param _ids         The array of bin Ids where to add liquidity
     /// @return ftAmount    The amount of ERC20 need to transfer
-    function _getAmountsToAdd(address _pair, uint24[] calldata _ids)
-        internal
-        pure
-        returns (uint128 ftAmount)
-    {
+    function _getAmountsToAdd(
+        address _pair,
+        uint24[] calldata _ids
+    ) internal pure returns (uint128 ftAmount) {
         for (uint256 i; i < _ids.length; ) {
             ftAmount += IMidasPair721(_pair).getPriceFromBin(_ids[i]);
             unchecked {
@@ -389,91 +412,62 @@ contract MidasRouter is IMidasRouter {
     // /// @param _pair        The address of pair
     // /// @param _tokenIds    The array of tokenIds to be quoted
     // /// @return totalAmount The amount of ERC20 need to transfer
-    function _getMinAmountIn(address _pair, uint256[] calldata _tokenIds)
-        internal
-        view
-        returns (uint128 totalAmount)
-    {
-        uint256 _length = _tokenIds.length;
-        uint128[] memory uniqueElements = new uint128[](_length);
-        uint256[] memory uniqueCounts = new uint256[](_length);
+    function _getMinAmountIn(
+        address _pair,
+        uint256[] calldata _tokenIds
+    ) internal view returns (uint128 totalAmount) {
+        uint256 _length;
         uint256 uniqueCount;
+        uint256 _rate1;
+        uint256 _rate2;
         uint128 item;
-        for (uint256 i ; i < _length; ) {
-            bool isRepeated;
+        bool isRepeated;
+        uint128[] memory uniqueElements;
+        uint256[] memory uniqueCounts;
+        _length = _tokenIds.length;
+        uniqueElements = new uint128[](_length);
+        uniqueCounts = new uint256[](_length);
+        for (uint256 i; i < _length; ) {
             item = IMidasPair721(_pair).getLPFromNFT(_tokenIds[i]);
-            for (uint256 j ; j < uniqueCount; ) {
+            for (uint256 j; j < uniqueCount; ) {
                 if (item == uniqueElements[j]) {
                     isRepeated = true;
-                    unchecked{
+                    unchecked {
                         uniqueCounts[j]++;
                     }
                     break;
                 }
-                unchecked{
+                unchecked {
                     ++j;
                 }
             }
             if (!isRepeated) {
                 uniqueElements[uniqueCount] = item;
                 uniqueCounts[uniqueCount] = 1;
-                unchecked{
+                unchecked {
                     uniqueCount++;
                 }
             }
-            unchecked{
+            unchecked {
                 ++i;
             }
         }
-        for (uint i; i < uniqueCount; ) {
+        for (uint256 i; i < uniqueCount; ) {
             totalAmount += IMidasPair721(_pair).getBinParamFromLP(
                 uniqueElements[i],
                 uniqueCounts[i]
             );
-            unchecked{
+            unchecked {
                 ++i;
             }
         }
-        (uint256 _rate1, , uint256 _rate2) = IMidasPair721(_pair).feeParameters();
+        (_rate1, , _rate2) = IMidasPair721(_pair).feeParameters();
         unchecked {
-            totalAmount = uint128( (totalAmount * (1e18 + _rate1 + _rate2)) / 1e18 + 1 );
+            totalAmount = uint128(
+                (totalAmount * (1e18 + _rate1 + _rate2)) / 1e18 + 1
+            );
         }
     }
-
-    // /// @notice The function to quote a set of NFTs
-    // /// @param _pair        The address of pair
-    // /// @param _tokenIds    The array of tokenIds to be quoted
-    // /// @return totalAmount The amount of ERC20 need to transfer
-    // function _getMinAmountIn(address _pair, uint256[] calldata _tokenIds)
-    //     public
-    //     view
-    //     returns (uint128 totalAmount)
-    // {
-    //     uint256 _length = _tokenIds.length;
-    //     uint128[] memory lpList = new uint128[](_length);
-    //     for (uint i; i < _length; ) {
-    //         lpList[i] = IMidasPair721(_pair).getLPFromNFT(_tokenIds[i]);
-    //         unchecked {
-    //             ++i;
-    //         }
-    //     }
-    //     uint256[] memory amountList;
-    //     (lpList, amountList) = PriceHelper.sortAndSplit(lpList);
-    //     _length = lpList.length;
-
-    //     unchecked {
-    //         for (uint i; i < _length; ++i) {
-    //             totalAmount += IMidasPair721(_pair).getBinParamFromLP(
-    //                 lpList[i],
-    //                 amountList[i]
-    //             );
-    //         }
-    //     }
-    //     (uint256 _rate1, , uint256 _rate2) = IMidasPair721(_pair).feeParameters();
-    //     unchecked {
-    //         totalAmount = uint128( (totalAmount * (1e18 + _rate1 + _rate2)) / 1e18 + 1 );
-    //     }
-    // }
 
     function _safeTransferETH(address _to, uint256 _amount) private {
         (bool success, ) = _to.call{value: _amount}("");
@@ -484,5 +478,4 @@ contract MidasRouter is IMidasRouter {
         weth.deposit{value: _amount}();
         weth.transfer(_to, _amount);
     }
-
 }

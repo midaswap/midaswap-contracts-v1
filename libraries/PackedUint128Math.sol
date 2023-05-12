@@ -268,18 +268,6 @@ library PackedUint128Math {
     //     return encode(x1, x2);
     // }
 
-    // function addAndSub(bytes32 a, uint128 b, uint128 c) internal pure returns (bytes32 z) {
-    //     assembly {
-    //         z := sub(add(a, and(b, 0xffffffffffffffffffffffffffffffff)), shl(128, c))  // Perform sub(add(a, encode(b, 0)), encode(0, c)) in a single step
-    //     }
-    // }
-
-    // function subAndAdd(bytes32 a, uint128 b, uint128 c) internal pure returns (bytes32 z) {
-    //     assembly {
-    //         z := sub(add(a, shl(128, c)), and(b, 0xffffffffffffffffffffffffffffffff))  // Perform sub(add(a, encode(b, 0)), encode(0, c)) in a single step
-    //     }
-    // }
-
     function addFirst(bytes32 a, uint128 b) internal pure returns (bytes32 z) {
         assembly {
             z := add(a, and(b, 0xffffffffffffffffffffffffffffffff))

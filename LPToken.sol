@@ -5,7 +5,6 @@ import {ERC721} from "./libraries/ERC721.sol";
 import {Strings} from "./libraries/Strings.sol";
 
 contract LPToken is ERC721 {
-    
     using Strings for uint256;
     using Strings for address;
 
@@ -21,9 +20,13 @@ contract LPToken is ERC721 {
     // Token Y address
     address private tokenY;
 
-    constructor(string memory _name, string memory _symbol, address _factory, address _tokenX, address _tokenY)
-        ERC721(_name, _symbol)
-    {
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        address _factory,
+        address _tokenX,
+        address _tokenY
+    ) ERC721(_name, _symbol) {
         factory = _factory;
         tokenX = _tokenX;
         tokenY = _tokenY;
@@ -39,13 +42,9 @@ contract LPToken is ERC721 {
         pair = _pair;
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
         require(_ownerOf[tokenId] != address(0));
         string memory baseURI = _baseURI();
         return
@@ -76,5 +75,4 @@ contract LPToken is ERC721 {
     function _baseURI() internal view virtual returns (string memory) {
         return "www.midaswap.org/";
     }
-
 }

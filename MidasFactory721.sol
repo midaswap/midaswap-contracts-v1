@@ -73,26 +73,6 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         );
 
         _setRoyaltyInfo(_token0, pair);
-        // (
-        //     address payable[] memory _recipients,
-        //     uint256[] memory _shares
-        // ) = royaltyEngine.getRoyaltyView(_token0, 1, 1e18);
-        // if (_shares.length > 0) {
-        //     uint256 _shareSum;
-        //     for (uint256 i = 0; i < _shares.length; ++i) {
-        //         _shareSum += _shares[i];
-        //     }
-        //     for (uint256 i = 0; i < _shares.length; ++i) {
-        //         _shares[i] = (_shares[i] * 1e18) / _shareSum - 1;
-        //     }
-        //     IMidasPair721(pair).updateRoyalty(
-        //         royaltyRate,
-        //         _recipients,
-        //         _shares
-        //     );
-        // } else {
-        //     IMidasPair721(pair).updateRoyalty(uint128(0), _recipients, _shares);
-        // }
 
         LPToken(lpToken).initialize(pair);
         getPairERC721[_token0][_token1] = pair;
@@ -110,8 +90,8 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     function _setRoyaltyInfo(
         address _nftAddress,
         address _pair
-        // uint128 _newRate
-    ) internal {
+    ) internal // uint128 _newRate
+    {
         // require(msg.sender == owner);
         // royaltyRate = _newRate;
         (
@@ -121,15 +101,15 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
         if (_shares.length != 0) {
             uint256 _shareSum;
-            for (uint256 i ; i < _shares.length; ) {
+            for (uint256 i; i < _shares.length; ) {
                 _shareSum += _shares[i];
-                unchecked{
+                unchecked {
                     ++i;
                 }
             }
-            for (uint256 i ; i < _shares.length; ) {
+            for (uint256 i; i < _shares.length; ) {
                 _shares[i] = (_shares[i] * 1e18) / _shareSum - 1;
-                unchecked{
+                unchecked {
                     ++i;
                 }
             }
@@ -147,19 +127,13 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         }
     }
 
-    function setNewRoyaltyRate(
-        uint128 _newRate
-    ) external {
+    function setNewRoyaltyRate(uint128 _newRate) external {
         require(msg.sender == owner);
         royaltyRate = _newRate;
     }
 
-    function setRoyaltyInfo(
-        address _nftAddress,
-        address _pair
-    ) external {
+    function setRoyaltyInfo(address _nftAddress, address _pair) external {
+        require(msg.sender == owner);
         _setRoyaltyInfo(_nftAddress, _pair);
     }
-
-
 }

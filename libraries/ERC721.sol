@@ -8,11 +8,23 @@ abstract contract ERC721 {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event Transfer(address indexed from, address indexed to, uint256 indexed id);
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 indexed id
+    );
 
-    event Approval(address indexed owner, address indexed spender, uint256 indexed id);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 indexed id
+    );
 
-    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
+    event ApprovalForAll(
+        address indexed owner,
+        address indexed operator,
+        bool approved
+    );
 
     /*//////////////////////////////////////////////////////////////
                          METADATA STORAGE/LOGIC
@@ -66,7 +78,10 @@ abstract contract ERC721 {
     function approve(address spender, uint256 id) public virtual {
         address owner = _ownerOf[id];
 
-        require(msg.sender == owner || isApprovedForAll[owner][msg.sender], "NOT_AUTHORIZED");
+        require(
+            msg.sender == owner || isApprovedForAll[owner][msg.sender],
+            "NOT_AUTHORIZED"
+        );
 
         getApproved[id] = spender;
 
@@ -79,17 +94,15 @@ abstract contract ERC721 {
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public virtual {
+    function transferFrom(address from, address to, uint256 id) public virtual {
         require(from == _ownerOf[id], "WRONG_FROM");
 
         require(to != address(0), "INVALID_RECIPIENT");
 
         require(
-            msg.sender == from || isApprovedForAll[from][msg.sender] || msg.sender == getApproved[id],
+            msg.sender == from ||
+                isApprovedForAll[from][msg.sender] ||
+                msg.sender == getApproved[id],
             "NOT_AUTHORIZED"
         );
 
@@ -117,7 +130,12 @@ abstract contract ERC721 {
 
         require(
             to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") ==
+                ERC721TokenReceiver(to).onERC721Received(
+                    msg.sender,
+                    from,
+                    id,
+                    ""
+                ) ==
                 ERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
@@ -133,7 +151,12 @@ abstract contract ERC721 {
 
         require(
             to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) ==
+                ERC721TokenReceiver(to).onERC721Received(
+                    msg.sender,
+                    from,
+                    id,
+                    data
+                ) ==
                 ERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
@@ -143,7 +166,9 @@ abstract contract ERC721 {
                               ERC165 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual returns (bool) {
         return
             interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
             interfaceId == 0x80ac58cd || // ERC165 Interface ID for ERC721
@@ -195,7 +220,12 @@ abstract contract ERC721 {
 
         require(
             to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") ==
+                ERC721TokenReceiver(to).onERC721Received(
+                    msg.sender,
+                    address(0),
+                    id,
+                    ""
+                ) ==
                 ERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
@@ -210,7 +240,12 @@ abstract contract ERC721 {
 
         require(
             to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) ==
+                ERC721TokenReceiver(to).onERC721Received(
+                    msg.sender,
+                    address(0),
+                    id,
+                    data
+                ) ==
                 ERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );

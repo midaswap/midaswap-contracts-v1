@@ -21,7 +21,8 @@ library BitMath {
     ) internal pure returns (uint256 id) {
         unchecked {
             // uint256 shift = 255 - bit;
-            uint256 shift = type(uint8).max - bit;
+            uint256 shift;
+            shift = type(uint8).max - bit;
             x <<= shift;
 
             // can't overflow as it's non-zero and we shifted it by `_shift`

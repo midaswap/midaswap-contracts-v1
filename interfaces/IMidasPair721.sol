@@ -5,6 +5,7 @@ pragma solidity 0.8.10;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IMidasFactory721} from "./IMidasFactory721.sol";
+import {IMidasFlashLoanCallback} from "./IMidasFlashLoanCallback.sol";
 
 /// @title Midas Pair Interface
 /// @author midaswap
@@ -23,6 +24,8 @@ interface IMidasPair721 {
     event PositionBurned(uint128 lpTokenId, address owner, uint128 feeCollected);
 
     event ClaimFee(uint128 lpTokenId , address owner , uint256 feeCollected);
+
+    event FlashLoan(address caller, IMidasFlashLoanCallback receiver, uint256[] NFTIDs);
     
     function tokenX() external view returns (IERC721);
 
@@ -79,6 +82,8 @@ interface IMidasPair721 {
         view
         returns(uint128 _totalPrice);
 
+    function getLpReserve(uint128 _lpTokenID) external view returns (uint128 amountX, uint128 amountY);
+
     function sellNFT(uint256 NFTID,  address _to) external returns (uint128 _amountOut);
     
     function buyNFT(uint256 NFTID, address _to) external;
@@ -119,4 +124,5 @@ interface IMidasPair721 {
     
     function updateRoyalty(uint128 _newRate , address payable[] calldata newrecipients, uint256[] calldata newshares) external;
 
+    function flashLoan(IMidasFlashLoanCallback receiver, uint256[] calldata NFTlist, bytes calldata data) external;
 }

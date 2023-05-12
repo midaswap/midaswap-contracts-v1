@@ -15,8 +15,10 @@ library Strings {
      */
     function toString(uint256 value) internal pure returns (string memory) {
         unchecked {
-            uint256 length = log10(value) + 1;
-            string memory buffer = new string(length);
+            uint256 length;
+            length = log10(value) + 1;
+            string memory buffer;
+            buffer = new string(length);
             uint256 ptr;
             /// @solidity memory-safe-assembly
             assembly {
@@ -47,8 +49,12 @@ library Strings {
     /**
      * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.
      */
-    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
-        bytes memory buffer = new bytes(2 * length + 2);
+    function toHexString(
+        uint256 value,
+        uint256 length
+    ) internal pure returns (string memory) {
+        bytes memory buffer;
+        buffer = new bytes(2 * length + 2);
         buffer[0] = "0";
         buffer[1] = "x";
         for (uint256 i = 2 * length + 1; i > 1; --i) {
@@ -66,46 +72,43 @@ library Strings {
         return toHexString(uint256(uint160(addr)), _ADDRESS_LENGTH);
     }
 
-
-
     /**
      * @dev Return the log in base 10, rounded down, of a positive value.
      * Returns 0 if given 0.
      */
     function log10(uint256 value) internal pure returns (uint256) {
-        uint256 result = 0;
+        uint256 result;
         unchecked {
-            if (value >= 10**64) {
-                value /= 10**64;
+            if (value >= 10 ** 64) {
+                value /= 10 ** 64;
                 result += 64;
             }
-            if (value >= 10**32) {
-                value /= 10**32;
+            if (value >= 10 ** 32) {
+                value /= 10 ** 32;
                 result += 32;
             }
-            if (value >= 10**16) {
-                value /= 10**16;
+            if (value >= 10 ** 16) {
+                value /= 10 ** 16;
                 result += 16;
             }
-            if (value >= 10**8) {
-                value /= 10**8;
+            if (value >= 10 ** 8) {
+                value /= 10 ** 8;
                 result += 8;
             }
-            if (value >= 10**4) {
-                value /= 10**4;
+            if (value >= 10 ** 4) {
+                value /= 10 ** 4;
                 result += 4;
             }
-            if (value >= 10**2) {
-                value /= 10**2;
+            if (value >= 10 ** 2) {
+                value /= 10 ** 2;
                 result += 2;
             }
-            if (value >= 10**1) {
+            if (value >= 10 ** 1) {
                 result += 1;
             }
         }
         return result;
     }
-
 
     /**
      * @dev Return the log in base 256, rounded down, of a positive value.
@@ -114,7 +117,7 @@ library Strings {
      * Adding one to the result gives the number of pairs of hex symbols needed to represent `value` as a hex string.
      */
     function log256(uint256 value) internal pure returns (uint256) {
-        uint256 result = 0;
+        uint256 result;
         unchecked {
             if (value >> 128 > 0) {
                 value >>= 128;
