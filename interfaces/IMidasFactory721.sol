@@ -3,13 +3,13 @@ pragma solidity ^0.8.10;
 
 interface IMidasFactory721 {
 
-    event PairImplementationSet(address indexed oldPair, address indexed newPair);
-
-    event LptImplementationSet(address indexed oldLPT, address indexed newLPT);
-
     event OwnerChanged(address indexed oldOwner, address indexed newOwner);
 
     event FeeRateChanged(uint128 indexed oldFee, uint128 indexed newFee);
+
+    event PairImplementationSet(address indexed oldPair, address indexed newPair);
+
+    event LptImplementationSet(address indexed oldLPT, address indexed newLPT);
 
     event PairCreated(
         address indexed tokenX,

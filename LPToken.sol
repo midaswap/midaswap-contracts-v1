@@ -80,7 +80,7 @@ contract LPToken is ERC721 {
         return "www.midaswap.org/";
     }
 
-    // function getReserves(uint256 tokenId) external view virtual returns (uint256 xReserves, uint256 yReserves) {
-    //     (xReserves, yReserves) = IMidasPair721(pair).getLpReserves(tokenId);
-    // }
+    function getReserves(uint128 tokenId) external view virtual returns (uint256 xReserves, uint256 yReserves) {
+        (xReserves, yReserves) = IMidasPair721(pair).getLpReserve(tokenId);
+    }
 }

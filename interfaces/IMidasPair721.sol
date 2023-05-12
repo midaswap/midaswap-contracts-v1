@@ -6,6 +6,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IMidasFactory721} from "./IMidasFactory721.sol";
 import {IMidasFlashLoanCallback} from "./IMidasFlashLoanCallback.sol";
+import {LPToken} from "../LPToken.sol";
 
 /// @title Midas Pair Interface
 /// @author midaswap
@@ -27,9 +28,11 @@ interface IMidasPair721 {
 
     event FlashLoan(address caller, IMidasFlashLoanCallback receiver, uint256[] NFTIDs);
     
-    function tokenX() external view returns (IERC721);
+    function getTokenX() external view returns (IERC721);
 
-    function tokenY() external view returns (IERC20);
+    function getTokenY() external view returns (IERC20);
+
+    function getLPToken() external view returns (LPToken) ;
 
     function factory() external view returns (IMidasFactory721);
 
