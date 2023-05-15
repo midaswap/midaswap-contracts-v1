@@ -87,6 +87,7 @@ contract MidasPair721 is
         __ReentrancyGuard_init();
         _updateIDs(type(uint128).min);
     }
+    
     /* ========== VIEW FUNCTIONS ========== */
 
     function getTokenX() external pure override returns (IERC721) {
@@ -190,17 +191,18 @@ contract MidasPair721 is
     function getLpReserve(
         uint128 _lpTokenID
     ) external view override returns (uint128, uint128) {
+        uint256 _length;
         uint128 amountX;
         uint128 amountY;
+        uint128 fee;
+        uint128 _price;
         uint24 originBin;
         uint24 binStep;
         uint24 _id;
-        uint128 _price;
-        uint256 _length;
         uint256[] memory lpAsset;
         lpAsset = lpTokenAssetsMap[_lpTokenID];
         _length = lpAsset.length;
-        (originBin, binStep, ) = PackedUint24Math.getAll(
+        (originBin, binStep, fee) = PackedUint24Math.getAll(
             lpInfos[_lpTokenID]
         );
         if (_lpTokenID % 2 != type(uint128).min) return(type(uint128).min , type(uint128).min);
@@ -221,6 +223,9 @@ contract MidasPair721 is
             unchecked {
                 ++i;
             }
+        }
+        unchecked{
+            amountY += fee;
         }
         return(amountX, amountY);
         
@@ -738,7 +743,6 @@ contract MidasPair721 is
     function _rate() private pure returns(uint128){
         return _getArgUint128(60);
     }
-
 
 
     function _getPriceFromBin(uint24 _id) private pure returns (uint128) {
