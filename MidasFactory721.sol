@@ -83,7 +83,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
 
         _setRoyaltyInfo(_token0, pair);
-        LPToken(lpToken).initialize(pair, _token0, _token1, "MidasLPTOken", "MLPT");
+        LPToken(lpToken).initialize(pair, _token0, _token1, "MidasLPToken", "MLPT");
 
         getPairERC721[_token0][_token1] = pair;
         getLPTokenERC721[_token0][_token1] = lpToken;
