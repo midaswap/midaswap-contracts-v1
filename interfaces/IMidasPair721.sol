@@ -27,6 +27,8 @@ interface IMidasPair721 {
     event ClaimFee(uint128 lpTokenId , address owner , uint256 feeCollected);
 
     event FlashLoan(address caller, IMidasFlashLoanCallback receiver, uint256[] NFTIDs);
+
+    function initialize() external;
     
     function getTokenX() external view returns (IERC721);
 

@@ -82,12 +82,16 @@ contract MidasPair721 is
     constructor(
         address _factory
     ) {
-        if (address(_factory) == address(0)) revert MidasPair__AddressWrong();
+        if (_factory == address(0)) revert MidasPair__AddressWrong();
         factory = IMidasFactory721(_factory);
-        __ReentrancyGuard_init();
-        _updateIDs(type(uint128).min);
     }
-    
+
+    function initialize() external override {
+        if (address(factory) != msg.sender) revert MidasPair__AddressWrong();
+        __ReentrancyGuard_init();
+        _IDs = 0x0000000000000000000000000000000000000000000000000000ffffff000000;
+    }
+
     /* ========== VIEW FUNCTIONS ========== */
 
     function getTokenX() external pure override returns (IERC721) {
@@ -485,6 +489,7 @@ contract MidasPair721 is
             binStep,
             type(uint128).min
         );
+
         bytes32 _bin;
         uint24 _mintId;
         uint256[] memory newMap;
@@ -692,6 +697,7 @@ contract MidasPair721 is
         nonReentrant
     {
         if (_tokenIds.length == 0) revert MidasPair__ZeroBorrowAmount();
+
         for(uint256 i; i < _tokenIds.length; ){
             if (tokenX().ownerOf(_tokenIds[i]) != address(this)) revert MidasPair__NFTOwnershipWrong();
             tokenX().safeTransferFrom(
@@ -703,25 +709,14 @@ contract MidasPair721 is
                 ++i;
             }
         }
-        (bool success, bytes memory rData) = address(receiver).call(
-            abi.encodeWithSelector(
-                IMidasFlashLoanCallback.MidasFlashLoanCallback.selector,
-                msg.sender,
-                tokenX(),
-                _tokenIds,
-                data
-            )
-        );
+
+        receiver.MidasFlashLoanCallback(tokenX(), _tokenIds, data);
 
         for(uint256 i; i < _tokenIds.length; ){
             if (tokenX().ownerOf(_tokenIds[i]) != address(this)) revert MidasPair__NFTOwnershipWrong();
             unchecked{
                 ++i;
             }
-        }
-
-        if (!success || rData.length != 32 || abi.decode(rData, (bytes32)) != keccak256("MidasPair.onFlashLoan")) {
-            revert MidasPair__FlashLoanCallbackFailed();
         }
 
         emit FlashLoan(msg.sender, receiver, _tokenIds);

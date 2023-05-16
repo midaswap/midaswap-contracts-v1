@@ -1,0 +1,94 @@
+{
+	"compiler": {
+		"version": "0.8.10+commit.fc410830"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "contract IERC721",
+						"name": "tokenX",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "NFTlist",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"name": "MidasFlashLoanCallback",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"author": "Midas",
+			"kind": "dev",
+			"methods": {},
+			"title": "Midas Flashloan Callback Interface",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Required interface to interact with Midas flash loans",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Midas_V1.2/interfaces/IMidasFlashLoanCallBack.sol": "IMidasFlashLoanCallback"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/token/ERC721/IERC721.sol": {
+			"keccak256": "0xab28a56179c1db258c9bf5235b382698cb650debecb51b23d12be9e241374b68",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://daae589a9d6fa7e55f99f86c0a16796ca490f243fb3693632c3711c0646c1d56",
+				"dweb:/ipfs/QmR3zpd7wNw3rcUdekwiv6FYHJqksuTCXLVioTxu6Fbxk3"
+			]
+		},
+		"@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f",
+				"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
+			]
+		},
+		"Midas_V1.2/interfaces/IMidasFlashLoanCallBack.sol": {
+			"keccak256": "0x9a3762d4d88aca4ec6fb5568ee04fd91839282be8ddd9447f66a7a8be3c2b755",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b7a36c7fe0c602213eca3fefab4ee49b98d1c471da410e5afe5c9665f68298a5",
+				"dweb:/ipfs/QmebQceoG7EwYCtyqtpsk8wi3M2FPU47A29owjsg6tPYhn"
+			]
+		}
+	},
+	"version": 1
+}
