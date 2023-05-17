@@ -10,7 +10,6 @@ import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
 /// @notice Non-fungible token which wraps the positions of LPs
 
 contract LPToken is ERC721 {
-
     string public name;
     string public symbol;
 
@@ -33,7 +32,6 @@ contract LPToken is ERC721 {
         initialized = false;
     }
 
-
     function initialize(
         address _pair,
         address _tokenX,
@@ -51,13 +49,9 @@ contract LPToken is ERC721 {
         initialized = true;
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
         require(_ownerOf[tokenId] != address(0));
         string memory baseURI = _baseURI();
         return
@@ -89,7 +83,9 @@ contract LPToken is ERC721 {
         return "www.midaswap.org/";
     }
 
-    function getReserves(uint128 tokenId) external view virtual returns (uint128 xReserves, uint128 yReserves) {
+    function getReserves(
+        uint128 tokenId
+    ) external view virtual returns (uint128 xReserves, uint128 yReserves) {
         (xReserves, yReserves) = IMidasPair721(pair).getLpReserve(tokenId);
     }
 }

@@ -18,7 +18,6 @@ import {IERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions
 /// @notice Deploys Midaswap pairs and manages ownership
 
 contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
-
     address private owner;
     address private pairImplementation;
     address private lptImplementation;
@@ -58,12 +57,10 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     /// @param _token1  The second input token address
     /// @return lpToken The address of lpToken
     /// @return pair    The address of Midas pair
-    function createERC721Pair(address _token0, address _token1)
-        external
-        override
-        noDelegateCall
-        returns (address lpToken, address pair)
-    {
+    function createERC721Pair(
+        address _token0,
+        address _token1
+    ) external override noDelegateCall returns (address lpToken, address pair) {
         require(_token0 != _token1 && _token1 != address(0));
         require(IERC721(_token0).supportsInterface(bytes4(0x80ac58cd)));
         require(getPairERC721[_token0][_token1] == address(0));
@@ -82,9 +79,14 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
         IMidasPair721(pair).initialize();
 
-
         _setRoyaltyInfo(_token0, pair);
-        LPToken(lpToken).initialize(pair, _token0, _token1, "MidasLPTOken", "MLPT");
+        LPToken(lpToken).initialize(
+            pair,
+            _token0,
+            _token1,
+            "MidasLPToken",
+            "MLPT"
+        );
 
         getPairERC721[_token0][_token1] = pair;
         getLPTokenERC721[_token0][_token1] = lpToken;
@@ -98,9 +100,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         owner = _owner;
     }
 
-    function _setRoyaltyInfo(address _nftAddress, address _pair)
-        internal
-    {
+    function _setRoyaltyInfo(address _nftAddress, address _pair) internal {
         (
             address payable[] memory _recipients,
             uint256[] memory _shares
@@ -142,9 +142,11 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     function setRoyaltyInfo(address _nftAddress, address _pair) external {
         _setRoyaltyInfo(_nftAddress, _pair);
     }
-    
+
     function setPairImplementation(address _newPairImplementation) external {
-        require(msg.sender == owner && pairImplementation != _newPairImplementation);
+        require(
+            msg.sender == owner && pairImplementation != _newPairImplementation
+        );
         address _oldPairImplementation = pairImplementation;
         pairImplementation = _newPairImplementation;
         emit PairImplementationSet(
@@ -154,23 +156,26 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     }
 
     function setLptImplementation(address _newLptImplementation) external {
-        require(msg.sender == owner && lptImplementation != _newLptImplementation);
+        require(
+            msg.sender == owner && lptImplementation != _newLptImplementation
+        );
         address _oldLptImplementation = lptImplementation;
         lptImplementation = _newLptImplementation;
-        emit LptImplementationSet(
-            _oldLptImplementation, 
-            _newLptImplementation
-        );
+        emit LptImplementationSet(_oldLptImplementation, _newLptImplementation);
     }
 
     function flashLoan(
-        address _token0, 
-        address _token1, 
-        IMidasFlashLoanCallback receiver, 
-        uint256[] calldata _tokenIds, 
+        address _token0,
+        address _token1,
+        IMidasFlashLoanCallback receiver,
+        uint256[] calldata _tokenIds,
         bytes calldata data
     ) external {
         require(msg.sender == owner);
-        IMidasPair721(getPairERC721[_token0][_token1]).flashLoan(receiver, _tokenIds, data);
+        IMidasPair721(getPairERC721[_token0][_token1]).flashLoan(
+            receiver,
+            _tokenIds,
+            data
+        );
     }
 }

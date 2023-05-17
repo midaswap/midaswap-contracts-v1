@@ -79,9 +79,7 @@ contract MidasPair721 is
 
     /** Constructor **/
 
-    constructor(
-        address _factory
-    ) {
+    constructor(address _factory) {
         if (_factory == address(0)) revert MidasPair__AddressWrong();
         factory = IMidasFactory721(_factory);
     }
@@ -209,14 +207,15 @@ contract MidasPair721 is
         (originBin, binStep, fee) = PackedUint24Math.getAll(
             lpInfos[_lpTokenID]
         );
-        if (_lpTokenID & 0x1 != type(uint128).min) return(type(uint128).min , type(uint128).min);
+        if (_lpTokenID & 0x1 != type(uint128).min)
+            return (type(uint128).min, type(uint128).min);
         for (uint24 i; i < _length; ) {
             if (lpAsset[i] != MAX) {
                 unchecked {
                     amountX += 1e18;
                 }
             } else {
-                unchecked{
+                unchecked {
                     _id = originBin + i * binStep;
                 }
                 _price = _getPriceFromBin(_id);
@@ -228,14 +227,11 @@ contract MidasPair721 is
                 ++i;
             }
         }
-        unchecked{
+        unchecked {
             amountY += fee;
         }
-        return(amountX, amountY);
-        
+        return (amountX, amountY);
     }
-
-
 
     /* ========== EXTERNAL FUNCTIONS ========== */
 
@@ -334,7 +330,7 @@ contract MidasPair721 is
                 _rate(),
                 PackedUint128Math.decodeX(_royaltyInfo)
             );
-        
+
         delete assetLPMap[NFTID];
         tokenX().safeTransferFrom(address(this), _to, NFTID);
         if (
@@ -389,8 +385,11 @@ contract MidasPair721 is
         uint128 currentPositionID;
         _length = _ids.length;
         currentPositionID = PackedUint24Math.getUint128(_IDs);
-        if (_length == type(uint256).min || _length != _NFTIDs.length || _length > 100)
-            revert MidasPair__LengthWrong();
+        if (
+            _length == type(uint256).min ||
+            _length != _NFTIDs.length ||
+            _length > 100
+        ) revert MidasPair__LengthWrong();
         unchecked {
             (currentPositionID & 0x1 == type(uint128).min) == (isLimited)
                 ? currentPositionID += 1
@@ -488,7 +487,7 @@ contract MidasPair721 is
         );
 
         if (
-            _ids[_length - 1] > PackedUint24Math.getSecondUint24(_tempIDs) || 
+            _ids[_length - 1] > PackedUint24Math.getSecondUint24(_tempIDs) ||
             originBin < 7974122
         ) revert MidasPair__RangeWrong();
 
@@ -564,7 +563,7 @@ contract MidasPair721 is
         uint24 _id;
         bytes32 _bin;
         for (uint24 i; i < _binIdLength; ) {
-            unchecked{
+            unchecked {
                 _id = originBin + i * binStep;
             }
             _bin = _bins[_id];
@@ -691,32 +690,32 @@ contract MidasPair721 is
         _RoyaltyInfo = PackedUint128Math.setFirst(_RoyaltyInfo, _newRate);
     }
 
-
-
-    function flashLoan(IMidasFlashLoanCallback receiver, uint256[] calldata _tokenIds, bytes calldata data)
-        external
-        override
-        nonReentrant
-    {
+    function flashLoan(
+        IMidasFlashLoanCallback receiver,
+        uint256[] calldata _tokenIds,
+        bytes calldata data
+    ) external override nonReentrant {
         if (_tokenIds.length == 0) revert MidasPair__ZeroBorrowAmount();
         if (msg.sender != address(factory)) revert MidasPair__AddressWrong();
-        for(uint256 i; i < _tokenIds.length; ){
-            if (tokenX().ownerOf(_tokenIds[i]) != address(this)) revert MidasPair__NFTOwnershipWrong();
+        for (uint256 i; i < _tokenIds.length; ) {
+            if (tokenX().ownerOf(_tokenIds[i]) != address(this))
+                revert MidasPair__NFTOwnershipWrong();
             tokenX().safeTransferFrom(
-                    address(this),
-                    address(receiver),
-                    _tokenIds[i]
+                address(this),
+                address(receiver),
+                _tokenIds[i]
             );
-            unchecked{
+            unchecked {
                 ++i;
             }
         }
 
         receiver.MidasFlashLoanCallback(tokenX(), _tokenIds, data);
 
-        for(uint256 i; i < _tokenIds.length; ){
-            if (tokenX().ownerOf(_tokenIds[i]) != address(this)) revert MidasPair__NFTOwnershipWrong();
-            unchecked{
+        for (uint256 i; i < _tokenIds.length; ) {
+            if (tokenX().ownerOf(_tokenIds[i]) != address(this))
+                revert MidasPair__NFTOwnershipWrong();
+            unchecked {
                 ++i;
             }
         }
@@ -725,22 +724,21 @@ contract MidasPair721 is
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
-    function tokenX() private pure returns(IERC721){
+    function tokenX() private pure returns (IERC721) {
         return IERC721(_getArgAddress(0));
     }
 
-    function tokenY() private pure returns(IERC20){
+    function tokenY() private pure returns (IERC20) {
         return IERC20(_getArgAddress(20));
     }
 
-    function lpToken() private pure returns(LPToken){
+    function lpToken() private pure returns (LPToken) {
         return LPToken(_getArgAddress(40));
     }
 
-    function _rate() private pure returns(uint128){
+    function _rate() private pure returns (uint128) {
         return _getArgUint128(60);
     }
-
 
     function _getPriceFromBin(uint24 _id) private pure returns (uint128) {
         int256 _realId;

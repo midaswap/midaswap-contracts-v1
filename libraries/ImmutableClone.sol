@@ -27,10 +27,11 @@ library ImmutableClone {
      * @param data The encoded immutable arguments
      * @param salt The salt
      */
-    function cloneDeterministic(address implementation, bytes memory data, bytes32 salt)
-        internal
-        returns (address instance)
-    {
+    function cloneDeterministic(
+        address implementation,
+        bytes memory data,
+        bytes32 salt
+    ) internal returns (address instance) {
         assembly {
             // Compute the boundaries of the data and cache the memory slots around it.
             let mBefore2 := mload(sub(data, 0x40))
@@ -124,13 +125,21 @@ library ImmutableClone {
                 sub(data, 0x21),
                 or(
                     shl(0xd8, add(extraLength, 0x35)),
-                    or(shl(0x48, extraLength), 0x6100003d81600a3d39f3363d3d373d3d3d3d610000806035363936013d73)
+                    or(
+                        shl(0x48, extraLength),
+                        0x6100003d81600a3d39f3363d3d373d3d3d3d610000806035363936013d73
+                    )
                 )
             )
             mstore(dataEnd, shl(0xf0, extraLength))
 
             // Create the instance.
-            instance := create2(0, sub(data, 0x1f), add(extraLength, 0x3f), salt)
+            instance := create2(
+                0,
+                sub(data, 0x1f),
+                add(extraLength, 0x3f),
+                salt
+            )
 
             // If `instance` is zero, revert.
             if iszero(instance) {
@@ -156,7 +165,10 @@ library ImmutableClone {
      * @param data The encoded immutable arguments.
      * @return hash The initialization code hash.
      */
-    function initCodeHash(address implementation, bytes memory data) internal pure returns (bytes32 hash) {
+    function initCodeHash(
+        address implementation,
+        bytes memory data
+    ) internal pure returns (bytes32 hash) {
         assembly {
             // Compute the boundaries of the data and cache the memory slots around it.
             let mBefore2 := mload(sub(data, 0x40))
@@ -186,7 +198,10 @@ library ImmutableClone {
                 sub(data, 0x21),
                 or(
                     shl(0xd8, add(extraLength, 0x35)),
-                    or(shl(0x48, extraLength), 0x6100003d81600a3d39f3363d3d373d3d3d3d610000806035363936013d73)
+                    or(
+                        shl(0x48, extraLength),
+                        0x6100003d81600a3d39f3363d3d373d3d3d3d610000806035363936013d73
+                    )
                 )
             )
             mstore(dataEnd, shl(0xf0, extraLength))
@@ -211,11 +226,12 @@ library ImmutableClone {
      * @param deployer The address of the deployer.
      * @return predicted The predicted address.
      */
-    function predictDeterministicAddress(address implementation, bytes memory data, bytes32 salt, address deployer)
-        internal
-        pure
-        returns (address predicted)
-    {
+    function predictDeterministicAddress(
+        address implementation,
+        bytes memory data,
+        bytes32 salt,
+        address deployer
+    ) internal pure returns (address predicted) {
         bytes32 hash = initCodeHash(implementation, data);
         predicted = predictDeterministicAddress(hash, salt, deployer);
     }
@@ -228,11 +244,11 @@ library ImmutableClone {
      * @param deployer The address of the deployer.
      * @return predicted The predicted address.
      */
-    function predictDeterministicAddress(bytes32 hash, bytes32 salt, address deployer)
-        internal
-        pure
-        returns (address predicted)
-    {
+    function predictDeterministicAddress(
+        bytes32 hash,
+        bytes32 salt,
+        address deployer
+    ) internal pure returns (address predicted) {
         /// @solidity memory-safe-assembly
         assembly {
             // Compute the boundaries of the data and cache the memory slots around it.
@@ -249,5 +265,4 @@ library ImmutableClone {
             mstore(0x35, mBefore)
         }
     }
-
 }

@@ -13,11 +13,10 @@ library PositionHelper {
             uint24 target = _binIds[1];
             commonDiff = target - _binIds[0];
             for (uint256 i = 2; i < length; ) {
-                unchecked{
+                unchecked {
                     target += commonDiff;
                 }
-                if (_binIds[i] != target)
-                    revert MidasPair__BinSequenceWrong();
+                if (_binIds[i] != target) revert MidasPair__BinSequenceWrong();
                 unchecked {
                     ++i;
                 }
@@ -30,7 +29,7 @@ library PositionHelper {
     ) internal pure returns (uint128[] memory) {
         uint256 length;
         uint128[] memory newArr;
-        unchecked{
+        unchecked {
             length = arr.length - 1;
         }
         newArr = new uint128[](length);

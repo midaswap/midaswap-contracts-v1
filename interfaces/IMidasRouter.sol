@@ -6,7 +6,6 @@ pragma solidity ^0.8.10;
 /// @notice Providing the interfaces for trading and managing liquidity position
 
 interface IMidasRouter {
-
     function addLiquidityERC721(
         address _tokenX,
         address _tokenY,
@@ -78,7 +77,7 @@ interface IMidasRouter {
         uint256[] calldata _tokenIds,
         uint256 _deadline
     ) external returns (uint256 idAmount, uint128 lpTokenId);
-    
+
     function openMultiLimitOrders(
         address _tokenX,
         address _tokenY,
@@ -86,27 +85,26 @@ interface IMidasRouter {
         uint256[] calldata _tokenIds,
         uint256 _deadline
     ) external returns (uint128[] memory lpTokenIds);
-    
+
     function claimFee(
         address _tokenX,
         address _tokenY,
         uint128 _lpTokenId
-    ) external returns(uint128 _feeClaimed);
+    ) external returns (uint128 _feeClaimed);
 
     function claimAll(
         address _tokenX,
         address _tokenY,
         uint128[] calldata _lpTokenIds
-    ) external returns(uint128 _feeClaimed);
-    
+    ) external returns (uint128 _feeClaimed);
+
     function getAmountsToAdd(
         address _pair,
         uint24[] calldata _ids
-    ) external pure returns(uint128 ftAmount);  
+    ) external pure returns (uint128 ftAmount);
 
     function getMinAmountIn(
         address _pair,
         uint256[] calldata _tokenIds
     ) external view returns (uint128 totalAmount);
-    
 }

@@ -13,38 +13,63 @@ import {LPToken} from "../LPToken.sol";
 /// @notice Required interface of Midas Pair contract
 
 interface IMidasPair721 {
+    event SellNFT(
+        uint256 nftTokenId,
+        address from,
+        uint24 tradeBin,
+        uint128 lpTokenID
+    );
 
-    event SellNFT(uint256 nftTokenId, address from, uint24 tradeBin, uint128 lpTokenID);
+    event BuyNFT(
+        uint256 nftTokenId,
+        address from,
+        uint24 tradeBin,
+        uint128 lpTokenID
+    );
 
-    event BuyNFT(uint256 nftTokenId, address from, uint24 tradeBin, uint128 lpTokenID);
+    event ERC721PositionMinted(
+        uint128 lpTokenId,
+        uint24 binLower,
+        uint24 binStep,
+        uint256[] _NFTIDs
+    );
 
-    event ERC721PositionMinted(uint128 lpTokenId, uint24 binLower, uint24 binStep, uint256[] _NFTIDs);
+    event ERC20PositionMinted(
+        uint128 lpTokenId,
+        uint24 binLower,
+        uint24 binStep,
+        uint256 binAmount
+    );
 
-    event ERC20PositionMinted(uint128 lpTokenId, uint24 binLower, uint24 binStep, uint256 binAmount);
-    
-    event PositionBurned(uint128 lpTokenId, address owner, uint128 feeCollected);
+    event PositionBurned(
+        uint128 lpTokenId,
+        address owner,
+        uint128 feeCollected
+    );
 
-    event ClaimFee(uint128 lpTokenId , address owner , uint256 feeCollected);
+    event ClaimFee(uint128 lpTokenId, address owner, uint256 feeCollected);
 
-    event FlashLoan(address caller, IMidasFlashLoanCallback receiver, uint256[] NFTIDs);
+    event FlashLoan(
+        address caller,
+        IMidasFlashLoanCallback receiver,
+        uint256[] NFTIDs
+    );
 
     function initialize() external;
-    
+
     function getTokenX() external view returns (IERC721);
 
     function getTokenY() external view returns (IERC20);
 
-    function getLPToken() external view returns (LPToken) ;
+    function getLPToken() external view returns (LPToken);
 
     function factory() external view returns (IMidasFactory721);
 
     function getReserves()
         external
         view
-        returns (
-            uint128 reserveX,
-            uint128 reserveY
-        );
+        returns (uint128 reserveX, uint128 reserveY);
+
     function getIDs()
         external
         view
@@ -57,40 +82,38 @@ interface IMidasPair721 {
     function getGlobalFees()
         external
         view
-        returns (
-            uint128 feesYTotal,
-            uint128 feesYProtocol
-        );
+        returns (uint128 feesYTotal, uint128 feesYProtocol);
 
+    function feeParameters() external view returns (uint128, uint128, uint128);
 
-    function feeParameters() external view returns (uint128 , uint128 , uint128);
+    function getBin(
+        uint24 id
+    ) external view returns (uint128 reserveX, uint128 reserveY);
 
-    function getBin(uint24 id) external view returns (uint128 reserveX, uint128 reserveY);
+    function getLpInfos(
+        uint128 _LPtokenID
+    ) external view returns (uint24 originBin, uint24 binStep, uint128 _fee);
 
-    function getLpInfos(uint128 _LPtokenID)  
-        external 
-        view 
-        returns(uint24 originBin , uint24 binStep , uint128 _fee);
+    function getPriceFromBin(uint24 _id) external pure returns (uint128 _Price);
 
-    function getPriceFromBin(uint24 _id)
-        external 
-        pure 
-        returns(uint128 _Price);
+    function getLPFromNFT(
+        uint256 _NFTID
+    ) external view returns (uint128 _LPtoken);
 
-    function getLPFromNFT(uint256 _NFTID)
-        external 
-        view 
-        returns(uint128 _LPtoken );
+    function getBinParamFromLP(
+        uint128 _lpTokenID,
+        uint256 _amount
+    ) external view returns (uint128 _totalPrice);
 
-    function getBinParamFromLP(uint128 _lpTokenID , uint256 _amount)
-        external 
-        view
-        returns(uint128 _totalPrice);
+    function getLpReserve(
+        uint128 _lpTokenID
+    ) external view returns (uint128 amountX, uint128 amountY);
 
-    function getLpReserve(uint128 _lpTokenID) external view returns (uint128 amountX, uint128 amountY);
+    function sellNFT(
+        uint256 NFTID,
+        address _to
+    ) external returns (uint128 _amountOut);
 
-    function sellNFT(uint256 NFTID,  address _to) external returns (uint128 _amountOut);
-    
     function buyNFT(uint256 NFTID, address _to) external;
 
     function mintNFT(
@@ -98,22 +121,12 @@ interface IMidasPair721 {
         uint256[] calldata NFTIDs,
         address to,
         bool isLimited
-    )
-        external
-        returns (
-            uint256 number, 
-            uint128 LPtokenID
-        );
-    
+    ) external returns (uint256 number, uint128 LPtokenID);
+
     function mintFT(
         uint24[] calldata ids,
         address to
-    )
-        external
-        returns (
-            uint128 amountIn,
-            uint128 LPtokenID
-        );
+    ) external returns (uint128 amountIn, uint128 LPtokenID);
 
     function burn(
         uint128 LPtokenID,
@@ -123,11 +136,22 @@ interface IMidasPair721 {
 
     function collectProtocolFees() external returns (uint128 amountY);
 
-    function collectLPFees(uint128 LPtokenID , address _to) external returns (uint128 amountFee);
+    function collectLPFees(
+        uint128 LPtokenID,
+        address _to
+    ) external returns (uint128 amountFee);
 
     function collectRoyaltyFees() external returns (uint128 amountY);
-    
-    function updateRoyalty(uint128 _newRate , address payable[] calldata newrecipients, uint256[] calldata newshares) external;
 
-    function flashLoan(IMidasFlashLoanCallback receiver, uint256[] calldata NFTlist, bytes calldata data) external;
+    function updateRoyalty(
+        uint128 _newRate,
+        address payable[] calldata newrecipients,
+        uint256[] calldata newshares
+    ) external;
+
+    function flashLoan(
+        IMidasFlashLoanCallback receiver,
+        uint256[] calldata NFTlist,
+        bytes calldata data
+    ) external;
 }

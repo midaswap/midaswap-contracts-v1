@@ -17,7 +17,10 @@ abstract contract Clone {
      * @param length The length of the arg
      * @return arg The immutable bytes arg
      */
-    function _getArgBytes(uint256 argOffset, uint256 length) internal pure returns (bytes memory arg) {
+    function _getArgBytes(
+        uint256 argOffset,
+        uint256 length
+    ) internal pure returns (bytes memory arg) {
         uint256 offset;
         offset = _getImmutableArgsOffset();
         /// @solidity memory-safe-assembly
@@ -38,7 +41,9 @@ abstract contract Clone {
      * @param argOffset The offset of the arg in the immutable args
      * @return arg The immutable address arg
      */
-    function _getArgAddress(uint256 argOffset) internal pure returns (address arg) {
+    function _getArgAddress(
+        uint256 argOffset
+    ) internal pure returns (address arg) {
         uint256 offset;
         offset = _getImmutableArgsOffset();
         /// @solidity memory-safe-assembly
@@ -52,7 +57,9 @@ abstract contract Clone {
      * @param argOffset The offset of the arg in the immutable args
      * @return arg The immutable uint256 arg
      */
-    function _getArgUint256(uint256 argOffset) internal pure returns (uint256 arg) {
+    function _getArgUint256(
+        uint256 argOffset
+    ) internal pure returns (uint256 arg) {
         uint256 offset;
         offset = _getImmutableArgsOffset();
         /// @solidity memory-safe-assembly
@@ -67,7 +74,10 @@ abstract contract Clone {
      * @param length The length of the arg
      * @return arg The immutable uint256 array arg
      */
-    function _getArgUint256Array(uint256 argOffset, uint256 length) internal pure returns (uint256[] memory arg) {
+    function _getArgUint256Array(
+        uint256 argOffset,
+        uint256 length
+    ) internal pure returns (uint256[] memory arg) {
         uint256 offset;
         offset = _getImmutableArgsOffset();
         /// @solidity memory-safe-assembly
@@ -88,7 +98,9 @@ abstract contract Clone {
      * @param argOffset The offset of the arg in the immutable args
      * @return arg The immutable uint64 arg
      */
-    function _getArgUint128(uint256 argOffset) internal pure returns (uint128 arg) {
+    function _getArgUint128(
+        uint256 argOffset
+    ) internal pure returns (uint128 arg) {
         uint256 offset;
         offset = _getImmutableArgsOffset();
         /// @solidity memory-safe-assembly
@@ -102,7 +114,9 @@ abstract contract Clone {
      * @param argOffset The offset of the arg in the immutable args
      * @return arg The immutable uint64 arg
      */
-    function _getArgUint64(uint256 argOffset) internal pure returns (uint64 arg) {
+    function _getArgUint64(
+        uint256 argOffset
+    ) internal pure returns (uint64 arg) {
         uint256 offset;
         offset = _getImmutableArgsOffset();
         /// @solidity memory-safe-assembly
@@ -116,7 +130,9 @@ abstract contract Clone {
      * @param argOffset The offset of the arg in the immutable args
      * @return arg The immutable uint16 arg
      */
-    function _getArgUint16(uint256 argOffset) internal pure returns (uint16 arg) {
+    function _getArgUint16(
+        uint256 argOffset
+    ) internal pure returns (uint16 arg) {
         uint256 offset;
         offset = _getImmutableArgsOffset();
         /// @solidity memory-safe-assembly
@@ -146,7 +162,10 @@ abstract contract Clone {
     function _getImmutableArgsOffset() internal pure returns (uint256 offset) {
         /// @solidity memory-safe-assembly
         assembly {
-            offset := sub(calldatasize(), shr(0xf0, calldataload(sub(calldatasize(), 2))))
+            offset := sub(
+                calldatasize(),
+                shr(0xf0, calldataload(sub(calldatasize(), 2)))
+            )
         }
     }
 }
