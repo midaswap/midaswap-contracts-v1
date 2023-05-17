@@ -8,10 +8,15 @@ library PositionHelper {
     function _checkBinSequence(
         uint24[] calldata _binIds
     ) internal pure returns (uint24 commonDiff) {
-        if (_binIds.length > 1) {
-            commonDiff = _binIds[1] - _binIds[0];
-            for (uint256 i = 2; i < _binIds.length; ) {
-                if (_binIds[i] - _binIds[i - 1] != commonDiff)
+        uint256 length = _binIds.length;
+        if (length > 1) {
+            uint24 target = _binIds[1];
+            commonDiff = target - _binIds[0];
+            for (uint256 i = 2; i < length; ) {
+                unchecked{
+                    target += commonDiff;
+                }
+                if (_binIds[i] != target)
                     revert MidasPair__BinSequenceWrong();
                 unchecked {
                     ++i;
@@ -23,9 +28,13 @@ library PositionHelper {
     function _removeFirstItem(
         uint128[] memory arr
     ) internal pure returns (uint128[] memory) {
+        uint256 length;
         uint128[] memory newArr;
-        newArr = new uint128[](arr.length - 1);
-        for (uint256 i; i < newArr.length; ) {
+        unchecked{
+            length = arr.length - 1;
+        }
+        newArr = new uint128[](length);
+        for (uint256 i; i < length; ) {
             newArr[i] = arr[i + 1];
             unchecked {
                 ++i;

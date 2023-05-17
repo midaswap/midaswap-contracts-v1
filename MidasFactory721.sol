@@ -6,6 +6,7 @@ import {NoDelegateCall} from "./NoDelegateCall.sol";
 
 import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
 import {IMidasFactory721} from "./interfaces/IMidasFactory721.sol";
+import {IMidasFlashLoanCallback} from "./interfaces/IMidasFlashLoanCallback.sol";
 import {IRoyaltyEngineV1} from "./interfaces/IRoyaltyEngineV1.sol";
 import {ImmutableClone} from "./libraries/ImmutableClone.sol";
 
@@ -83,7 +84,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
 
         _setRoyaltyInfo(_token0, pair);
-        LPToken(lpToken).initialize(pair, _token0, _token1, "MidasLPToken", "MLPT");
+        LPToken(lpToken).initialize(pair, _token0, _token1, "MidasLPTOken", "MLPT");
 
         getPairERC721[_token0][_token1] = pair;
         getLPTokenERC721[_token0][_token1] = lpToken;
@@ -160,5 +161,16 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
             _oldLptImplementation, 
             _newLptImplementation
         );
+    }
+
+    function flashLoan(
+        address _token0, 
+        address _token1, 
+        IMidasFlashLoanCallback receiver, 
+        uint256[] calldata _tokenIds, 
+        bytes calldata data
+    ) external {
+        require(msg.sender == owner);
+        IMidasPair721(getPairERC721[_token0][_token1]).flashLoan(receiver, _tokenIds, data);
     }
 }
