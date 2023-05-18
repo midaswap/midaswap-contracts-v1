@@ -90,9 +90,6 @@ library TreeMath {
             if (newLeaves == 0) {
                 bytes32 key1 = key2 >> 8;
                 leaves = tree.level1[key1];
-
-                // tree.level1[key1] = leaves & ~bytes32(1 << (uint256(key2) & type(uint8).max));
-
                 leaves &= ~bytes32(1 << (uint256(key2) & type(uint8).max));
                 tree.level1[key1] = leaves;
 
@@ -283,7 +280,6 @@ library TreeMath {
         TreeUint24 storage _tree2
     ) internal view returns (uint24 _bin, uint24 _bin2) {
         _bin2 = findFirstLeft(_tree2, type(uint24).min);
-        // uint24 delta = _bin2 == type(uint24).max ? 0 : 1;
         _bin = findFirstRight(
             _tree,
             _bin2 + (_bin2 == type(uint24).max ? type(uint24).min : 1)

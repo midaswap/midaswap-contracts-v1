@@ -433,7 +433,7 @@ contract MidasRouter is IMidasRouter {
                 if (item == uniqueElements[j]) {
                     isRepeated = true;
                     unchecked {
-                        uniqueCounts[j]++;
+                        ++uniqueCounts[j];
                     }
                     break;
                 }
@@ -445,7 +445,7 @@ contract MidasRouter is IMidasRouter {
                 uniqueElements[uniqueCount] = item;
                 uniqueCounts[uniqueCount] = 1;
                 unchecked {
-                    uniqueCount++;
+                    ++uniqueCount;
                 }
             }
             unchecked {
