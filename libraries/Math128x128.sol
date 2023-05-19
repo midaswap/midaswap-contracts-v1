@@ -3,7 +3,6 @@
 pragma solidity 0.8.10;
 
 import {BitMath} from "./BitMath.sol";
-import {Constants} from "./Constants.sol";
 
 /// @title Midas
 /// @author midaswap
@@ -14,9 +13,10 @@ library Uint128x128Math {
     error Uint128x128Math__LogUnderflow();
     error Uint128x128Math__PowUnderflow(uint256 x, int256 y);
 
-    uint256 constant LOG_SCALE_OFFSET = 127;
-    uint256 constant LOG_SCALE = 1 << LOG_SCALE_OFFSET;
-    uint256 constant LOG_SCALE_SQUARED = LOG_SCALE * LOG_SCALE;
+    uint256 private constant LOG_SCALE_OFFSET = 127;
+    uint256 private constant LOG_SCALE = 1 << LOG_SCALE_OFFSET;
+    uint256 private constant LOG_SCALE_SQUARED = LOG_SCALE * LOG_SCALE;
+    uint256 private constant SCALE = 1 << 128;
 
     /**
      * @notice Calculates the binary logarithm of x.
@@ -98,7 +98,7 @@ library Uint128x128Math {
         bool invert;
         uint256 absY;
 
-        if (y == 0) return Constants.SCALE;
+        if (y == 0) return SCALE;
 
         assembly {
             absY := y
@@ -109,7 +109,7 @@ library Uint128x128Math {
         }
 
         if (absY < 0x100000) {
-            result = Constants.SCALE;
+            result = SCALE;
             assembly {
                 let squared := x
                 if gt(x, 0xffffffffffffffffffffffffffffffff) {

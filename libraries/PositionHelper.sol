@@ -55,7 +55,7 @@ library PositionHelper {
         }
         newArr = new uint128[](_length);
         for (uint256 i; i < _length; ) {
-            if (arr[i] == target) j = 1;   
+            if (arr[i] == target) j = 1;
             unchecked {
                 newArr[i] = arr[i + j];
                 ++i;
