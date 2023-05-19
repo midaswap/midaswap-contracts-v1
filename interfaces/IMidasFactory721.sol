@@ -16,8 +16,8 @@ interface IMidasFactory721 {
     event PairCreated(
         address indexed tokenX,
         address indexed tokenY,
-        uint256 indexed feeRate,
-        address pair,
+        uint256 feeRate,
+        address indexed pair,
         address lpToken
     );
 

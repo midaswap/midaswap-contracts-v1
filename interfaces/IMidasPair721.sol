@@ -14,43 +14,43 @@ import {LPToken} from "../LPToken.sol";
 
 interface IMidasPair721 {
     event SellNFT(
-        uint256 nftTokenId,
-        address from,
+        uint256 indexed nftTokenId,
+        address indexed from,
         uint24 tradeBin,
-        uint128 lpTokenID
+        uint128 indexed lpTokenID
     );
 
     event BuyNFT(
-        uint256 nftTokenId,
-        address from,
+        uint256 indexed nftTokenId,
+        address indexed from,
         uint24 tradeBin,
-        uint128 lpTokenID
+        uint128 indexed lpTokenID
     );
 
     event ERC721PositionMinted(
-        uint128 lpTokenId,
-        uint24 binLower,
-        uint24 binStep,
+        uint128 indexed lpTokenId,
+        uint24 indexed binLower,
+        uint24 indexed binStep,
         uint256[] _NFTIDs
     );
 
     event ERC20PositionMinted(
-        uint128 lpTokenId,
-        uint24 binLower,
-        uint24 binStep,
+        uint128 indexed lpTokenId,
+        uint24 indexed binLower,
+        uint24 indexed binStep,
         uint256 binAmount
     );
 
     event PositionBurned(
-        uint128 lpTokenId,
-        address owner,
-        uint128 feeCollected
+        uint128 indexed lpTokenId,
+        address indexed owner,
+        uint128 indexed feeCollected
     );
 
-    event ClaimFee(uint128 lpTokenId, address owner, uint256 feeCollected);
+    event ClaimFee(uint128 indexed lpTokenId, address indexed owner, uint256 indexed feeCollected);
 
     event FlashLoan(
-        address caller,
+        address indexed caller,
         IMidasFlashLoanCallback receiver,
         uint256[] NFTIDs
     );
