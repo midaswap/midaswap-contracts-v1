@@ -27,14 +27,14 @@ library PositionHelper {
         assembly {
             if gt(ns.length, 1){
                 let guard := calldatasize()
-                let target := calldataload(add(ns.offset,32))
-                commonDiff := sub(calldataload(add(ns.offset,32)), calldataload(ns.offset))
-                if lt(calldataload(add(ns.offset,32)), calldataload(ns.offset)) {
+                let target := calldataload(add(ns.offset, 0x20))
+                commonDiff := sub(calldataload(add(ns.offset, 0x20)), calldataload(ns.offset))
+                if lt(calldataload(add(ns.offset, 0x20)), calldataload(ns.offset)) {
                             revert(0, 0)
                         }
-                for {let offset := add(ns.offset,64)} 
+                for {let offset := add(ns.offset, 0x40)} 
                     lt(offset, guard) 
-                    {} 
+                    {offset := add(offset, 0x20)} 
 
                     {   
                         if lt(calldataload(offset), target) {
@@ -44,7 +44,6 @@ library PositionHelper {
                         if iszero(eq(calldataload(offset), target)) {
                             revert(0, 0)                       
                         }
-                        offset := add(offset, 32)
                 
                     }
             }
