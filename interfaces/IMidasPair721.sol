@@ -74,8 +74,8 @@ interface IMidasPair721 {
         external
         view
         returns (
-            uint24 floorPriceID,
             uint24 bestOfferID,
+            uint24 floorPriceID,
             uint128 currentPositionID
         );
 
