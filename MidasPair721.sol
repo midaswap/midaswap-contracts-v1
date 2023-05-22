@@ -116,8 +116,8 @@ contract MidasPair721 is
         view
         override
         returns (
-            uint24 floorPriceID,
             uint24 bestOfferID,
+            uint24 floorPriceID,
             uint128 currentPositionID
         )
     {
@@ -737,15 +737,15 @@ contract MidasPair721 is
     }
 
     function _updateIDs(uint128 currentPositionID) internal {
-        uint24 floorPriceID;
         uint24 bestOfferID;
+        uint24 floorPriceID;
         bytes32 _ids;
-        (floorPriceID, bestOfferID) = _tree.updateBins(_tree2);
+        (bestOfferID, floorPriceID) = _tree.updateBins(_tree2);
         _ids = _IDs;
         if (currentPositionID == type(uint128).min) {
-            _ids = _ids.setBothUint24(floorPriceID, bestOfferID);
+            _ids = _ids.setBothUint24(bestOfferID, floorPriceID);
         } else {
-            _ids = floorPriceID.setAll(bestOfferID, currentPositionID);
+            _ids = bestOfferID.setAll(floorPriceID, currentPositionID);
         }
         _IDs = _ids;
     }
