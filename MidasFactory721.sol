@@ -57,10 +57,12 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     /// @param _token1  The second input token address
     /// @return lpToken The address of lpToken
     /// @return pair    The address of Midas pair
-    function createERC721Pair(
-        address _token0,
-        address _token1
-    ) external override noDelegateCall returns (address lpToken, address pair) {
+    function createERC721Pair(address _token0, address _token1)
+        external
+        override
+        noDelegateCall
+        returns (address lpToken, address pair)
+    {
         require(_token0 != _token1 && _token1 != address(0));
         require(IERC721(_token0).supportsInterface(bytes4(0x80ac58cd)));
         require(getPairERC721[_token0][_token1] == address(0));
@@ -94,7 +96,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         emit PairCreated(_token0, _token1, feeEnabled, pair, lpToken);
     }
 
-    function setOwner(address _owner) external {
+    function setOwner(address _owner) external override {
         require(msg.sender == owner);
         emit OwnerChanged(owner, _owner);
         owner = _owner;
@@ -134,16 +136,22 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         }
     }
 
-    function setNewRoyaltyRate(uint128 _newRate) external {
+    function setNewRoyaltyRate(uint128 _newRate) external override {
         require(msg.sender == owner);
         royaltyRate = _newRate;
     }
 
-    function setRoyaltyInfo(address _nftAddress, address _pair) external {
+    function setRoyaltyInfo(address _nftAddress, address _pair)
+        external
+        override
+    {
         _setRoyaltyInfo(_nftAddress, _pair);
     }
 
-    function setPairImplementation(address _newPairImplementation) external {
+    function setPairImplementation(address _newPairImplementation)
+        external
+        override
+    {
         require(
             msg.sender == owner && pairImplementation != _newPairImplementation
         );
@@ -155,13 +163,21 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         );
     }
 
-    function setLptImplementation(address _newLptImplementation) external {
+    function setLptImplementation(address _newLptImplementation)
+        external
+        override
+    {
         require(
             msg.sender == owner && lptImplementation != _newLptImplementation
         );
         address _oldLptImplementation = lptImplementation;
         lptImplementation = _newLptImplementation;
         emit LptImplementationSet(_oldLptImplementation, _newLptImplementation);
+    }
+
+    function setRoyaltyEngine(address _newRoyaltyEngine) external override {
+        require(msg.sender == owner);
+        royaltyEngine = IRoyaltyEngineV1(_newRoyaltyEngine);
     }
 
     function flashLoan(
