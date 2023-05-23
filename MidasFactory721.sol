@@ -53,47 +53,47 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     }
 
     /// @dev The function to create ERC721-ERC20 pair and the nonfungible lp Token contract
-    /// @param _token0  The first input token address
-    /// @param _token1  The second input token address
+    /// @param _tokenX  The first input token address
+    /// @param _tokenY  The second input token address
     /// @return lpToken The address of lpToken
     /// @return pair    The address of Midas pair
-    function createERC721Pair(address _token0, address _token1)
+    function createERC721Pair(address _tokenX, address _tokenY)
         external
         override
         noDelegateCall
         returns (address lpToken, address pair)
     {
-        require(_token0 != _token1 && _token1 != address(0));
-        require(IERC721(_token0).supportsInterface(bytes4(0x80ac58cd)));
-        require(getPairERC721[_token0][_token1] == address(0));
+        require(_tokenX != _tokenY && _tokenY != address(0));
+        require(IERC721(_tokenX).supportsInterface(bytes4(0x80ac58cd)));
+        require(getPairERC721[_tokenX][_tokenY] == address(0));
 
         lpToken = ImmutableClone.cloneDeterministic(
             lptImplementation,
             "",
-            keccak256(abi.encode(_token0, _token1, address(this)))
+            keccak256(abi.encode(_tokenX, _tokenY, address(this)))
         );
 
         pair = ImmutableClone.cloneDeterministic(
             pairImplementation,
-            abi.encodePacked(_token0, _token1, lpToken, feeEnabled),
-            keccak256(abi.encode(_token0, _token1, lpToken, feeEnabled))
+            abi.encodePacked(_tokenX, _tokenY, lpToken, feeEnabled),
+            keccak256(abi.encode(_tokenX, _tokenY, lpToken, feeEnabled))
         );
 
         IMidasPair721(pair).initialize();
 
-        _setRoyaltyInfo(_token0, pair);
+        _setRoyaltyInfo(_tokenX, pair);
         LPToken(lpToken).initialize(
             pair,
-            _token0,
-            _token1,
+            _tokenX,
+            _tokenY,
             "MidasLPToken",
             "MLPT"
         );
 
-        getPairERC721[_token0][_token1] = pair;
-        getLPTokenERC721[_token0][_token1] = lpToken;
+        getPairERC721[_tokenX][_tokenY] = pair;
+        getLPTokenERC721[_tokenX][_tokenY] = lpToken;
 
-        emit PairCreated(_token0, _token1, feeEnabled, pair, lpToken);
+        emit PairCreated(_tokenX, _tokenY, feeEnabled, pair, lpToken);
     }
 
     function setOwner(address _owner) external override {
@@ -102,13 +102,13 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         owner = _owner;
     }
 
-    function _setRoyaltyInfo(address _token0, address _token1) internal {
+    function _setRoyaltyInfo(address _tokenX, address _tokenY) internal {
         (
             address payable[] memory _recipients,
             uint256[] memory _shares
-        ) = royaltyEngine.getRoyaltyView(_token0, 1, 1e18);
+        ) = royaltyEngine.getRoyaltyView(_tokenX, 1, 1e18);
 
-        address _pair = getPairERC721[_token0][_token1];
+        address _pair = getPairERC721[_tokenX][_tokenY];
 
         if (_shares.length != 0) {
             uint256 _shareSum;
@@ -143,11 +143,11 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         royaltyRate = _newRate;
     }
 
-    function setRoyaltyInfo(address _token0, address _token1)
+    function setRoyaltyInfo(address _tokenX, address _tokenY)
         external
         override
     {
-        _setRoyaltyInfo(_token0, _token1);
+        _setRoyaltyInfo(_tokenX, _tokenY);
     }
 
     function setPairImplementation(address _newPairImplementation)
@@ -183,14 +183,14 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     }
 
     function flashLoan(
-        address _token0,
-        address _token1,
+        address _tokenX,
+        address _tokenY,
         IMidasFlashLoanCallback receiver,
         uint256[] calldata _tokenIds,
         bytes calldata data
     ) external {
         require(msg.sender == owner);
-        IMidasPair721(getPairERC721[_token0][_token1]).flashLoan(
+        IMidasPair721(getPairERC721[_tokenX][_tokenY]).flashLoan(
             receiver,
             _tokenIds,
             data
