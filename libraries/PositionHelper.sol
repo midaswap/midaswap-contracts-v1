@@ -3,36 +3,23 @@
 pragma solidity 0.8.10;
 
 library PositionHelper {
-    // error MidasPair__BinSequenceWrong();
 
-    // function _checkBinSequence(
-    //     uint24[] calldata _binIds
-    // ) internal pure returns (uint24 commonDiff) {
-    //     uint256 length;
-    //     length = _binIds.length;
-    //     if (length > 1) {
-    //         uint24 target = _binIds[1];
-    //         commonDiff = target - _binIds[0];
-    //         for (uint256 i = 2; i < length; ) {
-    //             target += commonDiff;
-    //             if (_binIds[i] != target) revert MidasPair__BinSequenceWrong();
-    //             unchecked {
-    //                 ++i;
-    //             }
-    //         }
-    //     }
-    // }
-
-    function _checkBinSequence(uint24[] calldata ns) internal pure returns (uint24 commonDiff) {
+    /**
+     * @dev Checks whether the given array is Arithmetic progression 
+     * @dev Returns the common difference if it is Arithmetic progression 
+     * @param arr The given array
+     * @return commonDiff The common difference
+     */
+    function _checkBinSequence(uint24[] calldata arr) internal pure returns (uint24 commonDiff) {
         assembly {
-            if gt(ns.length, 1){
+            if gt(arr.length, 1){
                 let guard := calldatasize()
-                let target := calldataload(add(ns.offset, 0x20))
-                commonDiff := sub(calldataload(add(ns.offset, 0x20)), calldataload(ns.offset))
-                if lt(calldataload(add(ns.offset, 0x20)), calldataload(ns.offset)) {
+                let target := calldataload(add(arr.offset, 0x20))
+                commonDiff := sub(calldataload(add(arr.offset, 0x20)), calldataload(arr.offset))
+                if lt(calldataload(add(arr.offset, 0x20)), calldataload(arr.offset)) {
                             revert(0, 0)
                         }
-                for {let offset := add(ns.offset, 0x40)} 
+                for {let offset := add(arr.offset, 0x40)} 
                     lt(offset, guard) 
                     {offset := add(offset, 0x20)} 
 
@@ -50,25 +37,11 @@ library PositionHelper {
         }
     }
 
-    // function _removeFirstItem(
-    //     uint128[] memory arr
-    // ) internal pure returns (uint128[] memory) {
-    //     uint256 length;
-    //     uint128[] memory newArr;
-    //     // arr must have length of at least 1, otherwise this function should not be called
-    //     unchecked {
-    //         length = arr.length - 1;
-    //     }
-    //     newArr = new uint128[](length);
-    //     for (uint256 i; i < length; ) {
-    //         newArr[i] = arr[i + 1];
-    //         unchecked {
-    //             ++i;
-    //         }
-    //     }
-    //     return newArr;
-    // }
-
+    /**
+     * @dev Removes the first item of the given array and returns it
+     * @param arr The given array
+     * @return arr The returned array
+     */
     function _removeFirstItem(uint128[] memory arr) internal pure returns (uint128[] memory) {
         assembly {
             let length := mload(arr)
@@ -86,29 +59,11 @@ library PositionHelper {
         return arr;
     }
 
-    // function _findIndexAndRemove(
-    //     uint128[] memory arr,
-    //     uint128 target
-    // ) internal pure returns (uint128[] memory) {
-    //     uint256 j;
-    //     uint256 _length;
-    //     uint128[] memory newArr;
-    //     // arr must have length of at least 1, otherwise this function should not be called
-    //     unchecked {
-    //         _length = arr.length - 1;
-    //     }
-    //     newArr = new uint128[](_length);
-    //     for (uint256 i; i < _length; ) {
-    //         if (arr[i] == target) j = 1;   
-    //         unchecked {
-    //             newArr[i] = arr[i + j];
-    //             ++i;
-    //         }
-    //     }
-    //     return newArr;
-    // }
-
-
+    /**
+     * @dev Removes the first given item of the given array and returns it
+     * @param arr The given array
+     * @return arr The returned array
+     */
     function _findIndexAndRemove(
         uint128[] memory arr,
         uint128 target

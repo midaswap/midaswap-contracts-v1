@@ -275,6 +275,14 @@ library TreeMath {
         }
     }
 
+
+    /**
+     * @dev Returns floorPrice bin and bestOffer bin in given trees
+     * @param _tree The tokenY tree
+     * @param _tree2 The tokenX tree
+     * @return _bin The bestOffer Bin
+     * @return _bin2 The floorPrice Bin
+     */
     function updateBins(
         TreeUint24 storage _tree,
         TreeUint24 storage _tree2

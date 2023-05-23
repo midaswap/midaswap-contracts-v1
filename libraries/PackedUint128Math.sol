@@ -268,6 +268,17 @@ library PackedUint128Math {
     //     return encode(x1, x2);
     // }
 
+
+    /**
+     * @dev Adds an encoded bytes32 and one uint128, reverting on overflow on the uint128
+     * @param a The bytes32 encoded as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2
+     * @param b The first uint128
+     * @return z The sum of a and b encoded as follows:
+     * [0 - 128[: x1 + b
+     * [128 - 256[: x2
+     */
     function addFirst(bytes32 a, uint128 b) internal pure returns (bytes32 z) {
         assembly {
             z := add(a, and(b, 0xffffffffffffffffffffffffffffffff))
@@ -275,6 +286,16 @@ library PackedUint128Math {
         checkAddOverFlow(z, a);
     }
 
+    /**
+     * @dev Adds an encoded bytes32 and one uint128, reverting on overflow on the uint128
+     * @param a The bytes32 encoded as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2
+     * @param b The second uint128
+     * @return z The sum of a and b encoded as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2 + b
+     */
     function addSecond(bytes32 a, uint128 b) internal pure returns (bytes32 z) {
         assembly {
             z := add(a, shl(128, b))
@@ -282,6 +303,16 @@ library PackedUint128Math {
         checkAddOverFlow(z, a);
     }
 
+    /**
+     * @dev Subtracts an encoded bytes32 by one uint128, reverting on overflow on the uint128
+     * @param a The bytes32 encoded as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2
+     * @param b The first uint128
+     * @return z The diff of a and b encoded as follows:
+     * [0 - 128[: x1 - b
+     * [128 - 256[: x2
+     */
     function subFirst(bytes32 a, uint128 b) internal pure returns (bytes32 z) {
         assembly {
             z := sub(a, and(b, 0xffffffffffffffffffffffffffffffff))
@@ -289,7 +320,17 @@ library PackedUint128Math {
 
         checkSubOverFlow(z, a);
     }
-
+    
+    /**
+     * @dev Subtracts an encoded bytes32 by one uint128, reverting on overflow on the uint128
+     * @param a The bytes32 encoded as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2
+     * @param b The second uint128
+     * @return z The diff of a and b encoded as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2 - b
+     */
     function subSecond(bytes32 a, uint128 b) internal pure returns (bytes32 z) {
         assembly {
             z := sub(a, shl(128, b))
@@ -298,6 +339,16 @@ library PackedUint128Math {
         checkSubOverFlow(z, a);
     }
 
+    /**
+     * @dev Encodes a bytes32 and a uint128 into a single bytes32
+     * @param oldParams The bytes32 encoded as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2
+     * @param param The uint128
+     * @return newParams The encoded bytes32 as follows:
+     * [0 - 128[: param
+     * [128 - 256[: x2
+     */
     function setFirst(
         bytes32 oldParams,
         uint128 param
@@ -311,6 +362,16 @@ library PackedUint128Math {
         }
     }
 
+    /**
+     * @dev Encodes a bytes32 and a uint128 into a single bytes32
+     * @param oldParams The bytes32 encoded as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2
+     * @param param The uint128
+     * @return newParams The encoded bytes32 as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: param
+     */
     function setSecond(
         bytes32 oldParams,
         uint128 param
@@ -327,12 +388,22 @@ library PackedUint128Math {
         }
     }
 
+    /** 
+     * Checks overflow in bytes32 add
+     * @param z The bytes32 before add
+     * @param a The bytes32 after add
+     */
     function checkAddOverFlow(bytes32 z, bytes32 a) internal pure {
         if (z < a || uint128(uint256(z)) < uint128(uint256(a))) {
             revert PackedUint128Math__AddOverflow();
         }
     }
 
+    /** 
+     * Checks overflow in bytes32 sub
+     * @param z The bytes32 before sub
+     * @param a The bytes32 after sub
+     */
     function checkSubOverFlow(bytes32 z, bytes32 a) internal pure {
         if (z > a || uint128(uint256(z)) > uint128(uint256(a))) {
             revert PackedUint128Math__SubUnderflow();

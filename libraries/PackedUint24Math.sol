@@ -10,6 +10,14 @@ pragma solidity 0.8.10;
 library PackedUint24Math {
     error PackedUint24Math__AddOverflow();
 
+    /**
+     * @dev Decodes a bytes32 into a uint24 as the first uint24
+     * @param params The encoded bytes32 as follows:
+     * [0 - 24[: baseFactor
+     * [24 - 48[: any
+     * [48 - 176[: any
+     * @return baseFactor The first uint24
+     */
     function getFirstUint24(
         bytes32 params
     ) internal pure returns (uint24 baseFactor) {
@@ -18,6 +26,14 @@ library PackedUint24Math {
         }
     }
 
+    /**
+     * @dev Decodes a bytes32 into a uint24 as the second uint24
+     * @param params The encoded bytes32 as follows:
+     * [0 - 24[: any
+     * [24 - 48[: baseFactor
+     * [48 - 176[: any
+     * @return baseFactor The second uint24
+     */
     function getSecondUint24(
         bytes32 params
     ) internal pure returns (uint24 baseFactor) {
@@ -26,6 +42,15 @@ library PackedUint24Math {
         }
     }
 
+    /**
+     * @dev Decodes a bytes32 into two uint24
+     * @param params The encoded bytes32 as follows:
+     * [0 - 24[: baseFactorA
+     * [24 - 48[: baseFactorB
+     * [48 - 176[: any
+     * @return baseFactorA The second uint24
+     * @return baseFactorB The second uint24
+     */
     function getBothUint24(
         bytes32 params
     ) internal pure returns (uint24 baseFactorA, uint24 baseFactorB) {
@@ -35,6 +60,14 @@ library PackedUint24Math {
         }
     }
 
+    /**
+     * @dev Decodes a bytes32 into a uint128
+     * @param params The encoded bytes32 as follows:
+     * [0 - 24[: any
+     * [24 - 48[: any
+     * [48 - 176[: baseFactor
+     * @return baseFactor The uint128
+     */
     function getUint128(
         bytes32 params
     ) internal pure returns (uint128 baseFactor) {
@@ -46,6 +79,16 @@ library PackedUint24Math {
         }
     }
 
+    /**
+     * @dev Decodes a bytes32 into two uint24 and one uint128
+     * @param params The encoded bytes32 as follows:
+     * [0 - 24[: baseFactorA
+     * [24 - 48[: baseFactorB
+     * [48 - 176[: baseFactorC
+     * @return baseFactorA The second uint24
+     * @return baseFactorB The second uint24
+     * @return baseFactorC The second uint128
+     */
     function getAll(
         bytes32 params
     )
@@ -63,6 +106,19 @@ library PackedUint24Math {
         }
     }
 
+    /**
+     * @dev Encodes a bytes32 and two uint24 into a single bytes32
+     * @param oldParams The bytes32 encoded as follows:
+     * [0 - 24[: baseFactorA
+     * [24 - 48[: baseFactorB
+     * [48 - 176[: baseFactorC
+     * @param paramA The first uint24 to be set
+     * @param paramB The second uint24 to be set
+     * @return newParams The encoded bytes32 as follows:
+     * [0 - 24[: paramA
+     * [24 - 48[: paramB
+     * [48 - 176[: baseFactorC
+     */
     function setBothUint24(
         bytes32 oldParams,
         uint24 paramA,
@@ -76,6 +132,18 @@ library PackedUint24Math {
         }
     }
 
+    /**
+     * @dev Encodes a bytes32 and a uint128 into a single bytes32
+     * @param oldParams The bytes32 encoded as follows:
+     * [0 - 24[: baseFactorA
+     * [24 - 48[: baseFactorB
+     * [48 - 176[: baseFactorC
+     * @param param The uint128 to be set
+     * @return newParams The encoded bytes32 as follows:
+     * [0 - 24[: baseFactorA
+     * [24 - 48[: baseFactorB
+     * [48 - 176[: param
+     */
     function setUint128(
         bytes32 oldParams,
         uint128 param
@@ -92,6 +160,16 @@ library PackedUint24Math {
         }
     }
 
+    /**
+     * @dev Encodes two uint24 and a uint128 into a single bytes32
+     * @param paramA The first uint24 to be set
+     * @param paramB The second uint24 to be set
+     * @param paramC The uint128 to be set
+     * @return newParams The encoded bytes32 as follows:
+     * [0 - 24[: paramA
+     * [24 - 48[: paramB
+     * [48 - 176[: paramC
+     */
     function setAll(
         uint24 paramA,
         uint24 paramB,
@@ -104,6 +182,18 @@ library PackedUint24Math {
         }
     }
 
+    /**
+     * @dev Adds an encoded bytes32 and one uint128, reverting on overflow on the uint128
+     * @param oldParams The bytes32 encoded as follows:
+     * [0 - 24[: baseFactorA
+     * [24 - 48[: baseFactorB
+     * [48 - 176[: baseFactorC
+     * @param param The  uint128
+     * @return newParams The sum of oldParams and param encoded as follows:
+     * [0 - 24[: baseFactorA
+     * [24 - 48[: baseFactorB
+     * [48 - 176[: baseFactorC + param
+     */
     function addUint128(
         bytes32 oldParams,
         uint128 param

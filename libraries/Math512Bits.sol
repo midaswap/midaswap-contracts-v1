@@ -8,14 +8,24 @@ library Math512Bits {
     error Math512Bits__MulShiftOverflow();
     error Math512Bits__MulDivOverflow();
 
+
+    /**
+     * @notice Calculates floor(x * 1e18 / 2**128) with full precision
+     * The result will be rounded down
+     * @dev Credit to Remco Bloemen under MIT license https://xn--2-umb.com/21/muldiv
+     * Requirements:
+     * - The result must fit within uint256
+     * Caveats:
+     * - This function does not work with fixed-point numbers
+     * @param x The multiplicand as an uint256
+     * @return result The result as an uint256
+     */
     function mulShiftRoundDownS(
         uint256 x
     ) internal pure returns (uint256 result) {
         (uint256 prod0, uint256 prod1) = _getMulProds(x, 1e18);
 
-        // if (prod0 != 0) result = prod0 >> 128;
         if (prod0 != type(uint256).min) result = prod0 >> 128;
-        // if (prod1 != 0) {
         if (prod1 != type(uint256).min) {
             // Make sure the result is less than 2^256.
             if (prod1 >= 1 << 128) revert Math512Bits__MulShiftOverflow();

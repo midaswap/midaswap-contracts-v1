@@ -6,13 +6,16 @@ pragma solidity 0.8.10;
 /// @author midaswap
 /// @notice Helper contract used for fees calculation
 library FeeHelper {
-    // function getFeeAmountFrom(uint128 _fee, uint128 _amountWithFees) internal pure returns (uint128) {
-    //     unchecked{
-    //         //in case overflow in uint128 * uint128
-    //         return uint128((uint256(_amountWithFees) * _fee + 1e18 - 1) / 1e18);
-    //     }
-    // }
-
+    
+    /**
+     * @notice Internal function to calculate the fees
+     * @param _amount The total amount (fee + fee base)
+     * @param _rateFee The rate of trading fee
+     * @param _rateRoyalty The rate of royalty fee
+     * @return _feesTotal The total trading fee
+     * @return _feesProtocol The protocol fee
+     * @return _feesRoyalty The royalty fee
+     */
     function getFeeBaseAndDistribution(
         uint128 _amount,
         uint128 _rateFee,
@@ -39,7 +42,16 @@ library FeeHelper {
         }
     }
 
-    // Assuming protocol share  = 10%
+    /**
+     * @notice Internal function to calculate the fees
+     * @dev Assuming protocol share  = 10%
+     * @param _feeBase The fee base
+     * @param _rateFee The rate of trading fee
+     * @param _rateRoyalty The rate of royalty fee
+     * @return _feesTotal The total trading fee
+     * @return _feesProtocol The protocol fee
+     * @return _feesRoyalty The royalty fee
+     */
     function getFeeAmountDistributionWithRoyalty(
         uint128 _feeBase,
         uint128 _rateFee,
