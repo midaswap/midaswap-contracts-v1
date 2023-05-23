@@ -3,7 +3,7 @@ pragma solidity 0.8.10;
 
 import {IMidasFactory721} from "../interfaces/IMidasFactory721.sol";
 
-contract MidasFactoryCreatePair {
+contract MidasFactoryCreatePairTest {
 
     IMidasFactory721 public factory;
 
