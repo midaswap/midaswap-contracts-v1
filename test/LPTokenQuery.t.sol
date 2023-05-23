@@ -5,6 +5,13 @@ import {LPToken} from "../LPToken.sol";
 
 contract LPTokenQueryTest {
 
+    function getTokenURI(
+        address lpToken,
+        uint128 lpTokenId
+    ) external view virtual returns (string memory) {
+        return LPToken(lpToken).tokenURI(lpTokenId);
+    }
+
     function getLpReserves(
         address lpToken,
         uint128 lpTokenId
