@@ -22,8 +22,8 @@ interface IMidasFactory721 {
     );
 
     function createERC721Pair(
-        address _token0,
-        address _token1
+        address _tokenX,
+        address _tokenY
     ) external returns (address lpToken, address pair);
 
     function feeRecipient() external view returns (address _feeRecipient);
@@ -44,7 +44,7 @@ interface IMidasFactory721 {
 
     function setNewRoyaltyRate(uint128 _newRate) external;
 
-    function setRoyaltyInfo(address _token0, address _token1) external;
+    function setRoyaltyInfo(address _tokenX, address _tokenY) external;
 
     function setPairImplementation(address _newPairImplementation) external;
 
