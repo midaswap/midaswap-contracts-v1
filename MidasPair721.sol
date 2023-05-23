@@ -95,22 +95,46 @@ contract MidasPair721 is
 
     /* ========== VIEW FUNCTIONS ========== */
 
+    /**
+     * @notice Returns the token X of the Pair
+     * @return tokenX The address of the token X
+     */
     function getTokenX() external pure override returns (IERC721) {
         return tokenX();
     }
 
+    /**
+     * @notice Returns the token Y of the Pair
+     * @return tokenY The address of the token Y
+     */
     function getTokenY() external pure override returns (IERC20) {
         return tokenY();
     }
 
+    /**
+     * @notice Returns the LP Token of the Pair
+     * @return lpToken The address of the LPToken
+     */
     function getLPToken() external pure override returns (LPToken) {
         return lpToken();
     }
 
+    /**
+     * @notice Returns the reserves of the Pair
+     * This is the sum of the reserves of all bins.
+     * @return reserveX The reserve of token X
+     * @return reserveY The reserve of token Y
+     */
     function getReserves() external view override returns (uint128, uint128) {
         return _Reserves.decode();
     }
 
+    /**
+     * @notice Returns the IDs of the Pair
+     * @return bestOfferID The best offer bin of the Pair
+     * @return floorPriceID The floor price bin of the Pair
+     * @return currentPositionID The current LP Token ID of the Pair
+     */
     function getIDs()
         external
         view
@@ -123,11 +147,22 @@ contract MidasPair721 is
     {
         return _IDs.getAll();
     }
-
+    
+    /**
+     * @notice Returns the Fees of the Pair
+     * @return totalFees The Total Fees reserve of the Pair, including Protocol Fees
+     * @return protocolFees The Protocol Fees reserve of the Pair
+     */
     function getGlobalFees() external view override returns (uint128, uint128) {
         return _Fees.decode();
     }
 
+    /**
+     * @notice Returns the Fees of the Pair
+     * @return rate The Fee rate of the Pair, including Protocol Fee
+     * @return protocolRate The Protocol rate of the Pair, persentage of the Fee
+     * @return royaltyRate The Royalty rate of the Pair
+     */
     function feeParameters()
         external
         view
@@ -139,34 +174,59 @@ contract MidasPair721 is
         royaltyRate = _RoyaltyInfo.decodeX();
     }
 
-    /// @notice View function to get the bin at `id`
-    /// @param _id The bin id
-    /// @return reserveX The reserve of tokenX of the bin
-    /// @return reserveY The reserve of tokenY of the bin
+    /**
+    * @notice Return the reserves of the bin at `id`
+    * @param _id The bin id
+    * @return reserveX The reserve of tokenX of the bin
+    * @return reserveY The reserve of tokenY of the bin
+    */
     function getBin(
         uint24 _id
     ) external view override returns (uint128, uint128) {
         return _bins[_id].decode();
     }
 
+    /**
+     * @notice Returns data of the LP `_LPtokenID`
+     * @param _LPtokenID The LP Token id
+     * @return originBin The first bin of the LP liquidity
+     * @return binStep The binStep of the LP liquidity
+     * @return lpFee The Fee reserve under this LP
+     */
     function getLpInfos(
         uint128 _LPtokenID
     ) external view override returns (uint24, uint24, uint128) {
         return lpInfos[_LPtokenID].getAll();
     }
 
+    /**
+     * @notice Returns the price corresponding to the given id
+     * @param _id The id of the bin
+     * @return price The price corresponding to this id
+     */
     function getPriceFromBin(
         uint24 _id
     ) external pure override returns (uint128) {
         return _getPriceFromBin(_id);
     }
 
+    /**
+     * @notice Returns the LPToken ID that owns the given NFT in the Pair
+     * @param _NFTID The id of the NFT
+     * @return LPtokenID The LPToken ID corresponding to this NFT
+     */
     function getLPFromNFT(
         uint256 _NFTID
     ) external view override returns (uint128) {
         return assetLPMap[_NFTID];
     }
 
+    /**
+     * @notice Returns the Total Price of `_amount` NFTs from `_lpTokenID`, not including fee.
+     * @param _lpTokenID The id of the LP Token
+     * @param _amount The amount of NFTs
+     * @return _totalPrice The Total Price of these NFTs
+     */
     function getBinParamFromLP(
         uint128 _lpTokenID,
         uint256 _amount
@@ -193,6 +253,12 @@ contract MidasPair721 is
         }
     }
 
+    /**
+     * @notice Returns the Liquidity Reserves of give LP Token, including LP Fees. 
+     * @param _lpTokenID The id of the LP Token
+     * @return reserveX The reserve of tokenX of the LP Token
+     * @return reserveY The reserve of tokenY of the LP Token, including LP Fees.
+     */
     function getLpReserve(
         uint128 _lpTokenID
     ) external view override returns (uint128, uint128) {
@@ -236,6 +302,17 @@ contract MidasPair721 is
 
     /* ========== EXTERNAL FUNCTIONS ========== */
 
+
+    /**
+     * @notice Sell tokenX at best offer price.
+     * Token X will be swapped for token Y.
+     * This function will not transfer the tokenX from the caller, it is expected that the tokenX have already been
+     * transferred to this contract through another contract, most likely the router.
+     * That is why this function shouldn't be called directly, but only through one of the swap functions of a router
+     * @param NFTID The ID of NFT that user wants to sell
+     * @param _to The address to send the tokenY to
+     * @return _amountOut The amounts of token Y sent to `to`
+     */
     function sellNFT(
         uint256 NFTID,
         address _to
@@ -300,7 +377,17 @@ contract MidasPair721 is
 
         emit SellNFT(NFTID, _to, _tradeID, _LPtokenID);
     }
+    
 
+    /**
+     * @notice Buy tokenX at corresponding price.
+     * Token Y will be swapped for token X.
+     * This function will not transfer the tokenY from the caller, it is expected that the tokenY have already been
+     * transferred to this contract through another contract, most likely the router.
+     * That is why this function shouldn't be called directly, but only through one of the swap functions of a router
+     * @param NFTID The ID of NFT that user wants to buy
+     * @param _to The address to send the tokenY to
+     */
     function buyNFT(uint256 NFTID, address _to) external override nonReentrant {
         uint128 _LPtokenID;
         uint24 _tradeId;
@@ -368,6 +455,20 @@ contract MidasPair721 is
         emit BuyNFT(NFTID, _to, _tradeId, _LPtokenID);
     }
 
+    /**
+     * @notice Mint liquidity token by depositing tokenXs into the pool.
+     * It will mint one LP tokens for all bins where the user adds liquidity.
+     * This function will not transfer the tokenX from the caller, it is expected that the tokenX have already been
+     * transferred to this contract through another contract, most likely the router.
+     * That is why this function shouldn't be called directly, but through one of the add liquidity functions of a
+     * router that will also perform safety checks.
+     * @param _ids The BinID List that user want to add liquidity to
+     * @param _NFTIDs The NFTID list that the user want to add to the given bins
+     * @param _to The address that will receive the LP Token
+     * @param isLimited Whether user is makeing limited order (true) or provide liquidity as LP (false)
+     * @return _amount The amounts of token X received by the pool
+     * @return _lpTokenID The ID of the LPToken the user will receive
+     */
     function mintNFT(
         uint24[] calldata _ids,
         uint256[] calldata _NFTIDs,
@@ -436,6 +537,18 @@ contract MidasPair721 is
         return (_length, currentPositionID);
     }
 
+    /**
+     * @notice Mint LP token by depositing tokenYs into the pool.
+     * It will mint one LP tokens for all bins where the user adds liquidity.
+     * This function will not transfer the tokenY from the caller, it is expected that the tokenY have already been
+     * transferred to this contract through another contract, most likely the router.
+     * That is why this function shouldn't be called directly, but through one of the add liquidity functions of a
+     * router that will also perform safety checks.
+     * @param _ids The BinID List that user want to add liquidity to
+     * @param _to The address that will receive the LP Token
+     * @return _amount The amounts of token Y received by the pool
+     * @return _lpTokenID The ID of the LPToken the user will receive
+     */
     function mintFT(
         uint24[] calldata _ids,
         address _to
@@ -522,11 +635,20 @@ contract MidasPair721 is
         return (_amountYAddedToPair, currentPositionID);
     }
 
+    /**
+     * @notice Burn LP tokens and withdraw tokens from the pool.
+     * This function will burn the tokens directly from the caller
+     * @param _LPtokenID The LP Token that will be burned
+     * @param _nftReceiver The address that will receive tokenXs from the pool
+     * @param _to The address that will receive tokenYs from the pool
+     * @return amountX The amounts of token X received by the user
+     * @return amountY The amounts of token Y received by the user
+     */
     function burn(
         uint128 _LPtokenID,
         address _nftReceiver,
         address _to
-    ) external override nonReentrant returns (uint128 amountY) {
+    ) external override nonReentrant returns (uint128 amountX, uint128 amountY) {
         uint256[] memory _tokenIds;
         uint256 _binIdLength;
         uint24 originBin;
@@ -540,7 +662,6 @@ contract MidasPair721 is
         delete lpTokenAssetsMap[_LPtokenID];
         delete lpInfos[_LPtokenID];
 
-        uint128 amountX;
         uint128 _price;
         uint24 _id;
         bytes32 _bin;
@@ -596,9 +717,10 @@ contract MidasPair721 is
         tokenY().safeTransfer(_to, amountY);
     }
 
-    /// @notice Collect the protocol fees and send them to the fee recipient.
-    /// @dev The protocol fees are not set to zero to save gas by not resetting the storage slot.
-    /// @return amountY The amount of token Y collected and sent to the fee recipient
+    /** 
+     * @notice Collect the protocol fees and send them to the fee recipient.
+     * @return amountY The amount of token Y collected and sent to the fee recipient
+     */
 
     function collectProtocolFees()
         external
@@ -616,6 +738,12 @@ contract MidasPair721 is
         tokenY().safeTransfer(_feeRecipient, amountY);
     }
 
+    /** 
+     * @notice Collect the protocol fees and send them to the fee recipient.
+     * @param _LPtokenID The LP Token ID that user claims fee from
+     * @param _to The address that will receive tokenYs from the pool
+     * @return amountFee The amount of token Y collected and sent to the given address
+     */
     function collectLPFees(
         uint128 _LPtokenID,
         address _to
@@ -631,6 +759,10 @@ contract MidasPair721 is
         emit ClaimFee(_LPtokenID, _to, amountFee);
     }
 
+    /** 
+     * @notice Collect the royalty fees and send them to the fee recipients.
+     * @return _royaltyFees The total amount of token Y collected and sent to the fee recipients
+     */
     function collectRoyaltyFees()
         external
         override
@@ -651,6 +783,13 @@ contract MidasPair721 is
         }
     }
 
+    /** 
+     * @notice Reset the royalty information of the pair
+     * @dev This function can only be called by factory
+     * @param _newRate The new royalty rate
+     * @param newrecipients The new royalty recipients 
+     * @param newshares The new royalty shares that each recipient owns
+     */
     function updateRoyalty(
         uint128 _newRate,
         address payable[] calldata newrecipients,
@@ -662,12 +801,19 @@ contract MidasPair721 is
         _RoyaltyInfo = _RoyaltyInfo.setFirst(_newRate);
     }
 
+
+    /**
+     * @notice Flash loan tokenXs from the pool to a receiver contract and execute a callback function.
+     * The receiver contract is expected to return the tokens to this contract.
+     * @param receiver The contract that will receive the tokens and execute the callback function
+     * @param _tokenIds The IDs of NFTs that will be borrowed
+     * @param data Any data that will be passed to the callback function
+     */
     function flashLoan(
         IMidasFlashLoanCallback receiver,
         uint256[] calldata _tokenIds,
         bytes calldata data
     ) external override nonReentrant {
-        if (_tokenIds.length == 0) revert MidasPair__ZeroBorrowAmount();
         if (msg.sender != address(factory)) revert MidasPair__AddressWrong();
         for (uint256 i; i < _tokenIds.length; ) {
             if (tokenX().ownerOf(_tokenIds[i]) != address(this))
@@ -696,22 +842,44 @@ contract MidasPair721 is
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
+
+    /**
+     * @dev Returns the token X of the Pair
+     * @return tokenX The address of the token X
+     */
     function tokenX() private pure returns (IERC721) {
         return IERC721(_getArgAddress(0));
     }
 
+    /**
+     * @dev Returns the token Y of the Pair
+     * @return tokenX The address of the token Y
+     */
     function tokenY() private pure returns (IERC20) {
         return IERC20(_getArgAddress(20));
     }
 
+    /**
+     * @dev Returns the LP Token of the Pair
+     * @return lpToken The address of the LPToken
+     */
     function lpToken() private pure returns (LPToken) {
         return LPToken(_getArgAddress(40));
     }
 
+    /**
+     * @dev Returns the Fees of the Pair
+     * @return rate The Fee rate of the Pair
+     */
     function _rate() private pure returns (uint128) {
         return _getArgUint128(60);
     }
 
+    /**
+     * @dev Returns the price corresponding to the given id
+     * @param _id The id of the bin
+     * @return price The price corresponding to this id
+     */
     function _getPriceFromBin(uint24 _id) private pure returns (uint128) {
         int256 _realId;
         uint256 _price;
@@ -724,6 +892,10 @@ contract MidasPair721 is
         return uint128(_price);
     }
 
+    /**
+     * @dev Checks whether the pool received the given NFT
+     * @param _NFTID The id of the NFT
+     */
     function _checkNFTOwner(uint256 _NFTID) internal view {
         if (
             assetLPMap[_NFTID] != type(uint128).min ||
@@ -731,11 +903,20 @@ contract MidasPair721 is
         ) revert MidasPair__NFTOwnershipWrong();
     }
 
+    /**
+     * @dev Checks whether the given address owns the given LP Token
+     * @param _lpTokenID The id of the LP Token
+     * @param _to The address to be checked
+     */
     function _checkLPTOwner(uint256 _lpTokenID, address _to) internal view {
         if (_to != lpToken().ownerOf(_lpTokenID))
             revert MidasPair__AddressWrong();
     }
 
+    /**
+     * @dev Updates the _IDs of the Pair
+     * @param currentPositionID The current LP Token ID of the Pair
+     */
     function _updateIDs(uint128 currentPositionID) internal {
         uint24 bestOfferID;
         uint24 floorPriceID;
@@ -750,13 +931,22 @@ contract MidasPair721 is
         _IDs = _ids;
     }
 
-    function _updateFees(uint128 amountX) internal {
+    /**
+     * @dev Updates the _Fees of the Pair
+     * @param amount The amount of token Y to be subtracted from the totalFees in the Fee parameter
+     */
+    function _updateFees(uint128 amount) internal {
         bytes32 _fees;
         _fees = _Fees;
-        _fees = _fees.subFirst(amountX);
+        _fees = _fees.subFirst(amount);
         _Fees = _fees;
     }
 
+    /**
+     * @dev Updates the LP Fee of the given LP token
+     * @param _lpToken The LP token ID that will be updated
+     * @param amountY The amount of token Y to be added to the LP Fee
+     */
     function _updateLpInfo(uint128 _lpToken, uint128 amountY) internal {
         bytes32 _info;
         _info = lpInfos[_lpToken];
@@ -764,6 +954,13 @@ contract MidasPair721 is
         lpInfos[_lpToken] = _info;
     }
 
+    /**
+     * @dev Returnss the ID of the bin where trading happens
+     * @dev Updates LPs reserve distribution when buying NFT
+     * @param _lpTokenID The LP token ID that owns the given tokenX
+     * @param _NFTID The ID of given NFT
+     * @return _currentID The ID of the bin where the trading should happen
+     */
     function _updateAssetMapBuy(
         uint128 _lpTokenID,
         uint256 _NFTID
@@ -799,6 +996,12 @@ contract MidasPair721 is
         }
     }
 
+    /**
+     * @dev Updates LPs reserve distribution when selling NFT
+     * @param _lpTokenID The LP token ID that owns the corresponding tokenY
+     * @param _tradeID The ID of the bin where the trading happens
+     * @param _NFTID The ID of given NFT
+     */
     function _updateAssetMapSell(
         uint128 _lpTokenID,
         uint24 _tradeID,
