@@ -132,7 +132,7 @@ interface IMidasPair721 {
         uint128 LPtokenID,
         address _nftReceiver,
         address to
-    ) external returns (uint128 amountY);
+    ) external returns (uint128 amountX, uint128 amountY);
 
     function collectProtocolFees() external returns (uint128 amountY);
 
