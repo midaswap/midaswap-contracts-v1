@@ -38,5 +38,16 @@ interface IMidasFactory721 {
         address tokenB
     ) external view returns (address lpToken);
 
+    function setOwner(address _owner) external;
+
+    function setRoyaltyEngine(address _newRoyaltyEngine) external;
+
+    function setNewRoyaltyRate(uint128 _newRate) external;
+
     function setRoyaltyInfo(address _nftAddress, address _pair) external;
+
+    function setPairImplementation(address _newPairImplementation) external;
+
+    function setLptImplementation(address _newLptImplementation) external;
+
 }
