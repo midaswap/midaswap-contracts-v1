@@ -102,11 +102,13 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         owner = _owner;
     }
 
-    function _setRoyaltyInfo(address _nftAddress, address _pair) internal {
+    function _setRoyaltyInfo(address _token0, address _token1) internal {
         (
             address payable[] memory _recipients,
             uint256[] memory _shares
-        ) = royaltyEngine.getRoyaltyView(_nftAddress, 1, 1e18);
+        ) = royaltyEngine.getRoyaltyView(_token0, 1, 1e18);
+
+        address _pair = getPairERC721[_token0][_token1];
 
         if (_shares.length != 0) {
             uint256 _shareSum;
@@ -141,11 +143,11 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         royaltyRate = _newRate;
     }
 
-    function setRoyaltyInfo(address _nftAddress, address _pair)
+    function setRoyaltyInfo(address _token0, address _token1)
         external
         override
     {
-        _setRoyaltyInfo(_nftAddress, _pair);
+        _setRoyaltyInfo(_token0, _token1);
     }
 
     function setPairImplementation(address _newPairImplementation)
