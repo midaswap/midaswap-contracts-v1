@@ -127,7 +127,7 @@ contract MidasRouter is IMidasRouter {
         _pair = factory.getPairERC721(_tokenX, _tokenY);
         _lpToken = factory.getLPTokenERC721(_tokenX, _tokenY);
         IERC721(_lpToken).safeTransferFrom(msg.sender, _pair, _lpTokenId);
-        (ftAmount) = IMidasPair721(_pair).burn(
+        (, ftAmount) = IMidasPair721(_pair).burn(
             _lpTokenId,
             msg.sender,
             msg.sender
@@ -148,7 +148,7 @@ contract MidasRouter is IMidasRouter {
         _pair = factory.getPairERC721(_tokenX, _tokenY);
         _lpToken = factory.getLPTokenERC721(_tokenX, _tokenY);
         IERC721(_lpToken).safeTransferFrom(msg.sender, _pair, _lpTokenId);
-        (ftAmount) = IMidasPair721(_pair).burn(
+        (, ftAmount) = IMidasPair721(_pair).burn(
             _lpTokenId,
             msg.sender,
             address(this)
