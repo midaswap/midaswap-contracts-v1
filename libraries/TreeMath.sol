@@ -33,13 +33,12 @@ library TreeMath {
     // }
 
     /**
-     * @dev Adds the id to the tree and returns true if the id was not already in the tree
+     * @dev Adds the id to the tree.
      * It will also propagate the change to the parent levels.
      * @param tree The tree
      * @param id The id
-     * @return True if the id was not already in the tree
      */
-    function add(TreeUint24 storage tree, uint24 id) internal returns (bool) {
+    function add(TreeUint24 storage tree, uint24 id) internal {
         bytes32 key2 = bytes32(uint256(id) >> 8);
 
         bytes32 leaves = tree.level2[key2];
@@ -62,23 +61,22 @@ library TreeMath {
                     );
             }
 
-            return true;
+            // return true;
         }
 
-        return false;
+        // return false;
     }
 
     /**
-     * @dev Removes the id from the tree and returns true if the id was in the tree.
+     * @dev Removes the id from the tree.
      * It will also propagate the change to the parent levels.
      * @param tree The tree
      * @param id The id
-     * @return True if the id was in the tree
      */
     function remove(
         TreeUint24 storage tree,
         uint24 id
-    ) internal returns (bool) {
+    ) internal {
         bytes32 key2 = bytes32(uint256(id) >> 8);
 
         bytes32 leaves = tree.level2[key2];
@@ -99,10 +97,10 @@ library TreeMath {
                     );
             }
 
-            return true;
+            // return true;
         }
 
-        return false;
+        // return false;
     }
 
     /**

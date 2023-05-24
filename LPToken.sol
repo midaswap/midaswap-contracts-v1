@@ -80,7 +80,7 @@ contract LPToken is ERC721 {
     }
 
     function _baseURI() internal view virtual returns (string memory) {
-        return "npapi.midaswap.info/metadata/v1/";
+        return "www.midaswap.org/";
     }
 
     function getReserves(

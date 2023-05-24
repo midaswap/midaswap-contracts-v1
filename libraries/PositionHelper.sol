@@ -8,15 +8,17 @@ library PositionHelper {
      * @dev Checks whether the given array is Arithmetic progression 
      * @dev Returns the common difference if it is Arithmetic progression 
      * @param arr The given array
+     * @return originBin The first item
      * @return commonDiff The common difference
      */
-    function _checkBinSequence(uint24[] calldata arr) internal pure returns (uint24 commonDiff) {
+    function _checkBinSequence(uint24[] calldata arr) internal pure returns (uint24 originBin, uint24 commonDiff) {
         assembly {
+            originBin := calldataload(arr.offset)
             if gt(arr.length, 1){
                 let guard := calldatasize()
                 let target := calldataload(add(arr.offset, 0x20))
-                commonDiff := sub(calldataload(add(arr.offset, 0x20)), calldataload(arr.offset))
-                if lt(calldataload(add(arr.offset, 0x20)), calldataload(arr.offset)) {
+                commonDiff := sub(calldataload(add(arr.offset, 0x20)), originBin)
+                if lt(calldataload(add(arr.offset, 0x20)), originBin) {
                             revert(0, 0)
                         }
                 for {let offset := add(arr.offset, 0x40)} 
