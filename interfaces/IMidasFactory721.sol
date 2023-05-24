@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
+/// @title Midas Factory Interface
+/// @author Midas
+/// @notice Required interface to interact with Midas Factory
+
 interface IMidasFactory721 {
     event OwnerChanged(address indexed oldOwner, address indexed newOwner);
 
