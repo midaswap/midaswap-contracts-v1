@@ -81,7 +81,6 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
         IMidasPair721(pair).initialize();
 
-        _setRoyaltyInfo(_tokenX, _tokenY);
         LPToken(lpToken).initialize(
             pair,
             _tokenX,
@@ -92,6 +91,8 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
         getPairERC721[_tokenX][_tokenY] = pair;
         getLPTokenERC721[_tokenX][_tokenY] = lpToken;
+        
+        _setRoyaltyInfo(_tokenX, _tokenY);
 
         emit PairCreated(_tokenX, _tokenY, feeEnabled, pair, lpToken);
     }
