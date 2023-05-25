@@ -81,7 +81,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
         IMidasPair721(pair).initialize();
 
-        _setRoyaltyInfo(_tokenX, pair);
+        _setRoyaltyInfo(_tokenX, _tokenY);
         LPToken(lpToken).initialize(
             pair,
             _tokenX,
