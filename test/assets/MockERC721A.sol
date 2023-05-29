@@ -3,7 +3,7 @@
 
 pragma solidity 0.8.10;
 
-import {IERC721A} from './interfaces/IERC721A.sol';
+import {IERC721A} from './IERC721A.sol';
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
