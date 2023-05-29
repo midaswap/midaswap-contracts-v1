@@ -472,7 +472,11 @@ contract MidasPair721 is
         uint256[] calldata _NFTIDs,
         address _to,
         bool isLimited
-    ) external override nonReentrant returns (uint256, uint128) {
+    )   
+        external 
+        override 
+        nonReentrant 
+        returns (uint256, uint128) {
         uint256 _length;
         uint128 currentPositionID;
         _length = _ids.length;
@@ -483,7 +487,7 @@ contract MidasPair721 is
                 : currentPositionID += 2;
         }
         lpToken().mint(_to, currentPositionID);
-
+        //
         uint24 originBin;
         uint24 binStep;
         (originBin, binStep) = _ids._checkBinSequence();
@@ -502,6 +506,7 @@ contract MidasPair721 is
             _bin = _bins[_id];
             if (_bin.decodeX() == 0) _tree2.add(_id);
             _checkNFTOwner(_NFTIDs[i]);
+            //
             assetLPMap[_NFTIDs[i]] = currentPositionID;
             _bin = _bin.addFirst(1e18);
             _bins[_id] = _bin;
@@ -544,7 +549,11 @@ contract MidasPair721 is
     function mintFT(
         uint24[] calldata _ids,
         address _to
-    ) external override nonReentrant returns (uint128, uint128) {
+    ) 
+        external 
+        override 
+        nonReentrant 
+        returns (uint128, uint128) {
         bytes32 _tempIDs;
         uint128 currentPositionID;
         uint128 _amountYAddedToPair;
@@ -561,7 +570,7 @@ contract MidasPair721 is
         }
 
         lpToken().mint(_to, currentPositionID);
-
+        //
         uint24 originBin;
         uint24 binStep;
         (originBin, binStep) = _ids._checkBinSequence();
@@ -581,6 +590,7 @@ contract MidasPair721 is
         uint128 _price;
         uint256[] memory newMap;
         newMap = new uint256[](_length);
+
         for (uint256 i; i < _length; ) {
             _mintId = _ids[i];
             _bin = _bins[_mintId];
@@ -598,7 +608,7 @@ contract MidasPair721 is
         }
 
         bytes32 _reserves;
-         _reserves = _Reserves;
+        _reserves = _Reserves;
         if (
             _amountYAddedToPair >
             tokenY().received(
@@ -607,6 +617,7 @@ contract MidasPair721 is
                 _RoyaltyInfo.decodeY()
             )
         ) revert MidasPair__AmountInWrong();
+        //
 
         _reserves = _reserves.addSecond(_amountYAddedToPair);
         _Reserves = _reserves;
@@ -1031,4 +1042,5 @@ contract MidasPair721 is
         }
         lpTokenAssetsMap[_lpTokenID][_index] = _NFTID;
     }
+
 }

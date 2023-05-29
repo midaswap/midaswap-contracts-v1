@@ -11,33 +11,52 @@ library PositionHelper {
      * @return originBin The first item
      * @return commonDiff The common difference
      */
-    function _checkBinSequence(uint24[] calldata arr) internal pure returns (uint24 originBin, uint24 commonDiff) {
-        assembly {
-            originBin := calldataload(arr.offset)
-            if gt(arr.length, 1){
-                let guard := calldatasize()
-                let target := calldataload(add(arr.offset, 0x20))
-                commonDiff := sub(calldataload(add(arr.offset, 0x20)), originBin)
-                if lt(calldataload(add(arr.offset, 0x20)), originBin) {
-                            revert(0, 0)
-                        }
-                for {let offset := add(arr.offset, 0x40)} 
-                    lt(offset, guard) 
-                    {offset := add(offset, 0x20)} 
-
-                    {   
-                        if lt(calldataload(offset), target) {
-                            revert(0, 0)
-                        }
-                        target := add(target, commonDiff)
-                        if iszero(eq(calldataload(offset), target)) {
-                            revert(0, 0)                       
-                        }
-                
-                    }
+    function _checkBinSequence(
+        uint24[] calldata arr
+    ) internal pure returns (uint24 originBin, uint24 commonDiff) {
+        uint256 length;
+        length = arr.length;
+        originBin = arr[0];
+        if (length > 1) {
+            uint24 target = arr[1];
+            commonDiff = target - originBin;
+            for (uint256 i = 2; i < length; ) {
+                target += commonDiff;
+                if (arr[i] != target) revert MidasPair__BinSequenceWrong();
+                unchecked {
+                    ++i;
+                }
             }
         }
     }
+    error MidasPair__BinSequenceWrong();
+    // function _checkBinSequence(uint24[] calldata arr) internal pure returns (uint24 originBin, uint24 commonDiff) {
+    //     assembly {
+    //         originBin := calldataload(arr.offset)
+    //         if gt(arr.length, 1){
+    //             let guard := calldatasize()
+    //             let target := calldataload(add(arr.offset, 0x20))
+    //             commonDiff := sub(calldataload(add(arr.offset, 0x20)), originBin)
+    //             if lt(calldataload(add(arr.offset, 0x20)), originBin) {
+    //                         revert(0, 0)
+    //                     }
+    //             for {let offset := add(arr.offset, 0x40)} 
+    //                 lt(offset, guard) 
+    //                 {offset := add(offset, 0x20)} 
+
+    //                 {   
+    //                     if lt(calldataload(offset), target) {
+    //                         revert(0, 0)
+    //                     }
+    //                     target := add(target, commonDiff)
+    //                     if iszero(eq(calldataload(offset), target)) {
+    //                         revert(0, 0)                       
+    //                     }
+                
+    //                 }
+    //         }
+    //     }
+    // }
 
     /**
      * @dev Removes the first item of the given array and returns it
