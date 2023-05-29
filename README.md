@@ -1,6 +1,6 @@
 # midaswap-protocol-1.2
 
-This repository contains the Midas721 contracts, as well as tests and deploy scripts.
+This repository contains the Midas721 contracts.
 
 - The [MidasPair721](./MidasPair721.sol) is the contract that contains all the logic of the actual pair for swaps, adds, removals of liquidity and fee claiming. This contract should never be deployed directly, and the factory should always be used for that matter.
 
