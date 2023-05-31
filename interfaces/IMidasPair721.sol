@@ -149,6 +149,10 @@ interface IMidasPair721 {
         uint256[] calldata newshares
     ) external;
 
+    function updateSafetyLock(
+        bool newLock
+    ) external;
+
     function flashLoan(
         IMidasFlashLoanCallback receiver,
         uint256[] calldata NFTlist,
