@@ -23,6 +23,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     address private lptImplementation;
     uint128 private feeEnabled;
     uint128 private royaltyRate;
+    bool private createPairLock;
 
     IRoyaltyEngineV1 private royaltyEngine;
 
@@ -46,6 +47,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
         royaltyRate = _royaltyRate;
         royaltyEngine = IRoyaltyEngineV1(_royaltyEngine);
+        createPairLock = true;
     }
 
     function feeRecipient() external view returns (address _feeRecipient) {
@@ -62,7 +64,8 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         override
         noDelegateCall
         returns (address lpToken, address pair)
-    {
+    {   
+        require(createPairLock == false || msg.sender == owner);
         require(_tokenX != _tokenY && _tokenY != address(0));
         require(IERC721(_tokenX).supportsInterface(bytes4(0x80ac58cd)));
         require(getPairERC721[_tokenX][_tokenY] == address(0));
@@ -96,12 +99,6 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         _setRoyaltyInfo(_tokenX, _tokenY);
 
         emit PairCreated(_tokenX, _tokenY, feeEnabled, pair, lpToken);
-    }
-
-    function setOwner(address _owner) external override {
-        require(msg.sender == owner);
-        emit OwnerChanged(owner, _owner);
-        owner = _owner;
     }
 
     function _setRoyaltyInfo(address _tokenX, address _tokenY) internal {
@@ -140,16 +137,18 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         }
     }
 
+
+    /* ========== setting parameters in Factory ========== */
+
+    function setOwner(address _owner) external override {
+        require(msg.sender == owner);
+        emit OwnerChanged(owner, _owner);
+        owner = _owner;
+    }
+
     function setNewRoyaltyRate(uint128 _newRate) external override {
         require(msg.sender == owner);
         royaltyRate = _newRate;
-    }
-
-    function setRoyaltyInfo(address _tokenX, address _tokenY)
-        external
-        override
-    {
-        _setRoyaltyInfo(_tokenX, _tokenY);
     }
 
     function setPairImplementation(address _newPairImplementation)
@@ -182,6 +181,25 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     function setRoyaltyEngine(address _newRoyaltyEngine) external override {
         require(msg.sender == owner);
         royaltyEngine = IRoyaltyEngineV1(_newRoyaltyEngine);
+    }
+
+    function setCreatePairLock(bool _newLock) external {
+        require(msg.sender == owner);
+        createPairLock = _newLock;
+    }
+
+    /* ========== setting parameters in Pairs ========== */
+
+    function setRoyaltyInfo(address _tokenX, address _tokenY)
+        external
+        override
+    {   
+        _setRoyaltyInfo(_tokenX, _tokenY);
+    }
+
+    function setSafetyLock(address _tokenX, address _tokenY, bool _newLock) external {
+        require(msg.sender == owner);
+        IMidasPair721(getPairERC721[_tokenX][_tokenY]).updateSafetyLock(_newLock);
     }
 
     function flashLoan(
