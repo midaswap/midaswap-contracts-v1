@@ -146,8 +146,17 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         owner = _owner;
     }
 
+    function setFee(uint128 _newRate) external override {
+        require(msg.sender == owner);
+        require(_newRate <= 1e18 / 20);
+        emit FeeRateChanged(feeEnabled, _newRate);
+        feeEnabled = _newRate;
+
+    }
+
     function setNewRoyaltyRate(uint128 _newRate) external override {
         require(msg.sender == owner);
+        require(_newRate <= 1e18 / 20);
         royaltyRate = _newRate;
     }
 
