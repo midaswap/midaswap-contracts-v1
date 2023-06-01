@@ -44,6 +44,8 @@ interface IMidasFactory721 {
 
     function setOwner(address _owner) external;
 
+    function setFee(uint128 _newRate) external;
+
     function setRoyaltyEngine(address _newRoyaltyEngine) external;
 
     function setNewRoyaltyRate(uint128 _newRate) external;
