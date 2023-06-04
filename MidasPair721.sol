@@ -819,6 +819,7 @@ contract MidasPair721 is
         creators = newrecipients;
         creatorShares = newshares;
         _RoyaltyInfo = _RoyaltyInfo.setFirst(_newRate);
+        emit NewRoyaltyFee(_newRate);
     }
 
     /** 
