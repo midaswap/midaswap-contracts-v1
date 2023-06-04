@@ -21,8 +21,6 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     address private owner;
     address private pairImplementation;
     address private lptImplementation;
-    uint128 private feeEnabled;
-    uint128 private royaltyRate;
     bool private createPairLock;
 
     IRoyaltyEngineV1 private royaltyEngine;
@@ -35,17 +33,11 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         override getLPTokenERC721;
 
     constructor(
-        uint128 _feeRate,
-        uint128 _royaltyRate,
         address _royaltyEngine
     ) {
         owner = msg.sender;
         emit OwnerChanged(address(0), msg.sender);
 
-        feeEnabled = _feeRate;
-        emit FeeRateChanged(uint128(0), feeEnabled);
-
-        royaltyRate = _royaltyRate;
         royaltyEngine = IRoyaltyEngineV1(_royaltyEngine);
         createPairLock = true;
     }
@@ -78,8 +70,8 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
         pair = ImmutableClone.cloneDeterministic(
             pairImplementation,
-            abi.encodePacked(_tokenX, _tokenY, lpToken, feeEnabled),
-            keccak256(abi.encode(_tokenX, _tokenY, lpToken, feeEnabled))
+            abi.encodePacked(_tokenX, _tokenY, lpToken),
+            keccak256(abi.encode(_tokenX, _tokenY, lpToken))
         );
 
         IMidasPair721(pair).initialize();
@@ -96,44 +88,51 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         getPairERC721[_tokenX][_tokenY] = pair;
         getLPTokenERC721[_tokenX][_tokenY] = lpToken;
 
-        _setRoyaltyInfo(_tokenX, _tokenY);
+        _setRoyaltyInfo(_tokenX, _tokenY, false);
 
-        emit PairCreated(_tokenX, _tokenY, feeEnabled, pair, lpToken);
+        emit PairCreated(_tokenX, _tokenY, pair, lpToken);
     }
 
-    function _setRoyaltyInfo(address _tokenX, address _tokenY) internal {
-        (
-            address payable[] memory _recipients,
-            uint256[] memory _shares
-        ) = royaltyEngine.getRoyaltyView(_tokenX, 1, 1e18);
-
+    function _setRoyaltyInfo(address _tokenX, address _tokenY, bool isZero) internal {
+        
         address _pair = getPairERC721[_tokenX][_tokenY];
-
-        if (_shares.length != 0) {
-            uint256 _shareSum;
-            for (uint256 i; i < _shares.length; ) {
-                _shareSum += _shares[i];
-                unchecked {
-                    ++i;
-                }
-            }
-            for (uint256 i; i < _shares.length; ) {
-                _shares[i] = (_shares[i] * 1e18) / _shareSum - 1;
-                unchecked {
-                    ++i;
-                }
-            }
-            IMidasPair721(_pair).updateRoyalty(
-                royaltyRate,
-                _recipients,
-                _shares
-            );
-        } else {
+        address payable[] memory _recipients;
+        uint256[] memory _shares;
+        if(isZero){
             IMidasPair721(_pair).updateRoyalty(
                 uint128(0),
                 _recipients,
                 _shares
             );
+        }else{
+            (_recipients, _shares) = royaltyEngine.getRoyaltyView(_tokenX, 1, 1e18);
+
+            if (_shares.length != 0) {
+                uint256 _shareSum;
+                for (uint256 i; i < _shares.length; ) {
+                    _shareSum += _shares[i];
+                    unchecked {
+                        ++i;
+                    }
+                }
+                for (uint256 i; i < _shares.length; ) {
+                    _shares[i] = (_shares[i] * 1e18) / _shareSum;
+                    unchecked {
+                        ++i;
+                    }
+                }
+                IMidasPair721(_pair).updateRoyalty(
+                    uint128(_shareSum),
+                    _recipients,
+                    _shares
+                );
+            } else {
+                IMidasPair721(_pair).updateRoyalty(
+                    uint128(0),
+                    _recipients,
+                    _shares
+                );
+            }
         }
     }
 
@@ -144,20 +143,6 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         require(msg.sender == owner);
         emit OwnerChanged(owner, _owner);
         owner = _owner;
-    }
-
-    function setFee(uint128 _newRate) external override {
-        require(msg.sender == owner);
-        require(_newRate <= 1e18 / 20);
-        emit FeeRateChanged(feeEnabled, _newRate);
-        feeEnabled = _newRate;
-
-    }
-
-    function setNewRoyaltyRate(uint128 _newRate) external override {
-        require(msg.sender == owner);
-        require(_newRate <= 1e18 / 20);
-        royaltyRate = _newRate;
     }
 
     function setPairImplementation(address _newPairImplementation)
@@ -199,11 +184,12 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
 
     /* ========== setting parameters in Pairs ========== */
 
-    function setRoyaltyInfo(address _tokenX, address _tokenY)
+    function setRoyaltyInfo(address _tokenX, address _tokenY, bool isZero)
         external
         override
     {   
-        _setRoyaltyInfo(_tokenX, _tokenY);
+        require(msg.sender == owner);
+        _setRoyaltyInfo(_tokenX, _tokenY, isZero);
     }
 
     function setSafetyLock(address _tokenX, address _tokenY, bool _newLock) external {

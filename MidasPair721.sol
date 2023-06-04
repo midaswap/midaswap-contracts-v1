@@ -168,7 +168,7 @@ contract MidasPair721 is
         override
         returns (uint128 rate, uint128 protocolRate, uint128 royaltyRate)
     {
-        rate = _rate();
+        rate = 5e15;
         protocolRate = 1e17;
         royaltyRate = _RoyaltyInfo.decodeX();
     }
@@ -331,7 +331,7 @@ contract MidasPair721 is
         _royaltyInfo = _RoyaltyInfo;
         _amountOutOfBin = _getPriceFromBin(_tradeID);
         (_feesTotal, _feesProtocol, _feesRoyalty) = _amountOutOfBin
-            .getFeeBaseAndDistribution(_rate(), _royaltyInfo.decodeX());
+            .getFeeBaseAndDistribution(_royaltyInfo.decodeX());
 
         unchecked {
             _amountOut = _amountOutOfBin - _feesTotal - _feesRoyalty;
@@ -417,7 +417,6 @@ contract MidasPair721 is
         _amountInToBin = _getPriceFromBin(_tradeId);
         (_feesTotal, _feesProtocol, _feesRoyalty) = _amountInToBin
             .getFeeAmountDistributionWithRoyalty(
-                _rate(),
                 _royaltyInfo.decodeX()
             );
 
@@ -822,7 +821,11 @@ contract MidasPair721 is
         _RoyaltyInfo = _RoyaltyInfo.setFirst(_newRate);
     }
 
-
+    /** 
+     * @notice Change the status of the pair lock
+     * @dev This function can only be called by factory
+     * @param lock The new lock status
+     */
     function updateSafetyLock(bool lock) external override{
         _checkSenderAddress(address(factory));
         safetyLock = lock;
@@ -895,14 +898,6 @@ contract MidasPair721 is
      */
     function lpToken() private pure returns (LPToken) {
         return LPToken(_getArgAddress(40));
-    }
-
-    /**
-     * @dev Returns the Fees of the Pair
-     * @return rate The Fee rate of the Pair
-     */
-    function _rate() private pure returns (uint128) {
-        return _getArgUint128(60);
     }
 
     /**
