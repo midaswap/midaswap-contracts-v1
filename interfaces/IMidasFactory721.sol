@@ -8,8 +8,6 @@ interface IMidasFactory721 {
 
     event OwnerChanged(address indexed oldOwner, address indexed newOwner);
 
-    event FeeRateChanged(uint128 indexed oldFee, uint128 indexed newFee);
-
     event PairImplementationSet(
         address indexed oldPair,
         address indexed newPair
@@ -20,7 +18,6 @@ interface IMidasFactory721 {
     event PairCreated(
         address indexed tokenX,
         address indexed tokenY,
-        uint256 feeRate,
         address indexed pair,
         address lpToken
     );
@@ -44,13 +41,9 @@ interface IMidasFactory721 {
 
     function setOwner(address _owner) external;
 
-    function setFee(uint128 _newRate) external;
-
     function setRoyaltyEngine(address _newRoyaltyEngine) external;
 
-    function setNewRoyaltyRate(uint128 _newRate) external;
-
-    function setRoyaltyInfo(address _tokenX, address _tokenY) external;
+    function setRoyaltyInfo(address _tokenX, address _tokenY, bool isZero) external;
 
     function setPairImplementation(address _newPairImplementation) external;
 
