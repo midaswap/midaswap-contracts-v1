@@ -10,7 +10,6 @@ library FeeHelper {
     /**
      * @notice Internal function to calculate the fees
      * @param _amount The total amount (fee + fee base)
-     * @param _rateFee The rate of trading fee
      * @param _rateRoyalty The rate of royalty fee
      * @return _feesTotal The total trading fee
      * @return _feesProtocol The protocol fee
@@ -18,14 +17,13 @@ library FeeHelper {
      */
     function getFeeBaseAndDistribution(
         uint128 _amount,
-        uint128 _rateFee,
         uint128 _rateRoyalty
     ) internal pure returns (uint128, uint128, uint128) {
         uint256 _fee;
         uint256 _denominator;
         uint128 _feeBase;
         unchecked {
-            _fee = _rateFee + _rateRoyalty;
+            _fee = 5e15 + _rateRoyalty;
             _denominator = 1e18 + _fee;
             //in case overflow in uint128 * uint128
             _feeBase =
@@ -36,7 +34,6 @@ library FeeHelper {
             return
                 getFeeAmountDistributionWithRoyalty(
                     _feeBase,
-                    _rateFee,
                     _rateRoyalty
                 );
         }
@@ -46,7 +43,6 @@ library FeeHelper {
      * @notice Internal function to calculate the fees
      * @dev Assuming protocol share  = 10%
      * @param _feeBase The fee base
-     * @param _rateFee The rate of trading fee
      * @param _rateRoyalty The rate of royalty fee
      * @return _feesTotal The total trading fee
      * @return _feesProtocol The protocol fee
@@ -54,7 +50,6 @@ library FeeHelper {
      */
     function getFeeAmountDistributionWithRoyalty(
         uint128 _feeBase,
-        uint128 _rateFee,
         uint128 _rateRoyalty
     )
         internal
@@ -67,7 +62,7 @@ library FeeHelper {
     {
         unchecked {
             //in case overflow in uint128 * uint128
-            _feesTotal = uint128((uint256(_feeBase) * _rateFee) / 1e18);
+            _feesTotal = _feeBase / 200;
             _feesProtocol = _feesTotal / 10;
             _feesRoyalty = uint128((uint256(_feeBase) * _rateRoyalty) / 1e18);
         }
