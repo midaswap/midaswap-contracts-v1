@@ -55,6 +55,8 @@ interface IMidasPair721 {
         uint256[] NFTIDs
     );
 
+    event NewRoyaltyFee(uint128 indexed newFee);
+
     function initialize() external;
 
     function getTokenX() external view returns (IERC721);
