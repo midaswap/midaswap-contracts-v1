@@ -121,6 +121,7 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
                         ++i;
                     }
                 }
+                if(_shareSum > 5e16) _shareSum = 5e16;
                 IMidasPair721(_pair).updateRoyalty(
                     uint128(_shareSum),
                     _recipients,
