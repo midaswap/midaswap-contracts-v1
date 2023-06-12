@@ -421,13 +421,13 @@ contract MidasRouter is IMidasRouter {
         uint256 _rate1;
         uint256 _rate2;
         uint128 item;
-        bool isRepeated;
         uint128[] memory uniqueElements;
         uint256[] memory uniqueCounts;
         _length = _tokenIds.length;
         uniqueElements = new uint128[](_length);
         uniqueCounts = new uint256[](_length);
         for (uint256 i; i < _length; ) {
+            bool isRepeated;
             item = IMidasPair721(_pair).getLPFromNFT(_tokenIds[i]);
             for (uint256 j; j < uniqueCount; ) {
                 if (item == uniqueElements[j]) {
