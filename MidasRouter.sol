@@ -104,7 +104,7 @@ contract MidasRouter is IMidasRouter {
         _pair = factory.getPairERC721(_tokenX, _tokenY);
         _amount = _getAmountsToAdd(_pair, _ids);
         if (_tokenY != address(weth)) revert Router__WrongPair();
-        if (msg.value < _amount) revert Router__WrongAmount();
+        //if (msg.value < _amount) revert Router__WrongAmount();
         _wethDepositAndTransfer(_pair, msg.value);
         (idAmount, lpTokenId) = IMidasPair721(_pair).mintFT(_ids, msg.sender);
     }
