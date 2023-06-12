@@ -390,8 +390,8 @@ library PackedUint128Math {
 
     /** 
      * Checks overflow in bytes32 add
-     * @param z The bytes32 before add
-     * @param a The bytes32 after add
+     * @param z The bytes32 after add
+     * @param a The bytes32 before add
      */
     function checkAddOverFlow(bytes32 z, bytes32 a) internal pure {
         if (z < a || uint128(uint256(z)) < uint128(uint256(a))) {
@@ -401,8 +401,8 @@ library PackedUint128Math {
 
     /** 
      * Checks overflow in bytes32 sub
-     * @param z The bytes32 before sub
-     * @param a The bytes32 after sub
+     * @param z The bytes32 after sub
+     * @param a The bytes32 before sub
      */
     function checkSubOverFlow(bytes32 z, bytes32 a) internal pure {
         if (z > a || uint128(uint256(z)) > uint128(uint256(a))) {
