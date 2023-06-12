@@ -125,8 +125,8 @@ library PackedUint24Math {
         uint24 paramB
     ) internal pure returns (bytes32 newParams) {
         assembly {
-            newParams := and(oldParams, not(shl(0, 0xffffff)))
-            newParams := or(newParams, shl(0, and(paramA, 0xffffff)))
+            newParams := and(oldParams, not(0xffffff))
+            newParams := or(newParams, and(paramA, 0xffffff))
             newParams := and(newParams, not(shl(24, 0xffffff)))
             newParams := or(newParams, shl(24, and(paramB, 0xffffff)))
         }
