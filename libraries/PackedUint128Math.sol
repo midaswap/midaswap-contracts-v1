@@ -388,6 +388,21 @@ library PackedUint128Math {
         }
     }
 
+    /**
+     * @dev Decodes a bytes32 into two uint128 and then add them together
+     * @param z The encoded bytes32 as follows:
+     * [0 - 128[: x1
+     * [128 - 256[: x2
+     * @return result the sum of x1 and x2
+     */
+    function sum(bytes32 z) internal pure returns (uint128 result) {
+        assembly {
+            let x1 := and(z, MASK_128)
+            let x2 := shr(OFFSET, z)
+            result := add(x1,x2)
+        }
+    }
+
     /** 
      * Checks overflow in bytes32 add
      * @param z The bytes32 after add
