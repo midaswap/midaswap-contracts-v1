@@ -674,7 +674,6 @@ contract MidasPair721 is
         _tokenIds = lpTokenAssetsMap[_LPtokenID];
         _binIdLength = _tokenIds.length;
         if(_binIdLength == 0) revert MidasPair__LengthOrRangeWrong();
-        _binIdLength = _tokenIds.length;
         (originBin, binStep, amountFee) = lpInfos[_LPtokenID].getAll();
         _checkLPTOwner(_LPtokenID, address(this));
         delete lpTokenAssetsMap[_LPtokenID];
