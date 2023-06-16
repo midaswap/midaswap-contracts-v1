@@ -337,12 +337,15 @@ contract MidasPair721 is
             _amountOut = _amountOutOfBin - _feesTotal - _feesRoyalty;
         }
 
-        uint128[] memory _lps;
         uint128 _LPtokenID;
-        _lps = binLPMap[_tradeID];
-        _LPtokenID = _lps[0];
-        binLPMap[_tradeID] = _lps._removeFirstItem();
+        // uint128[] memory _lps;
+        // _lps = binLPMap[_tradeID];
+        // _LPtokenID = _lps[0];
+        // binLPMap[_tradeID] = _lps._removeFirstItem();
+        _LPtokenID = binLPMap[_tradeID][binLPMap[_tradeID].length - 1];
+        binLPMap[_tradeID].pop();
         _checkNFTOwner(NFTID);
+        //
         assetLPMap[NFTID] = _LPtokenID;
 
         // update _RoyaltyInfo
@@ -368,16 +371,16 @@ contract MidasPair721 is
         // update _bins
         bytes32 _bin;
         _bin = _bins[_tradeID];
-        _bin = _bin.addFirst(1e18).subSecond(_amountOutOfBin);
+        _bin = _bin.addFirst(1).subSecond(1);
         _bins[_tradeID] = _bin;
         // update trees
-        if (_bin.decodeX() == 1e18) _tree2.add(_tradeID);
+        if (_bin.decodeX() == 1) _tree2.add(_tradeID);
         if (_bin.decodeY() == 0) _tree.remove(_tradeID);
         // update _IDs
         _updateIDs(0);
 
         tokenY().safeTransfer(_to, _amountOut);
-
+        //
         emit SellNFT(NFTID, _to, _tradeID, _LPtokenID);
     }
     
@@ -441,13 +444,13 @@ contract MidasPair721 is
             _updateLpInfo(_LPtokenID, _feesTotal - _feesProtocol);
             _fees = _fees.add(_feesTotal, _feesProtocol);
             _reserves = _reserves.subFirst(1e18).addSecond(_amountInToBin);
-            _bin = _bin.subFirst(1e18).addSecond(_amountInToBin);
+            _bin = _bin.subFirst(1).addSecond(1);
         } else {
             // NFT from Limited Orders
             _updateLpInfo(_LPtokenID, _amountInToBin);
             _fees = _fees.add(_amountInToBin + _feesTotal, _feesTotal);
             _reserves = _reserves.subFirst(1e18);
-            _bin = _bin.subFirst(1e18);
+            _bin = _bin.subFirst(1);
         }
 
         //update trees
@@ -517,7 +520,8 @@ contract MidasPair721 is
             _checkNFTOwner(_NFTIDs[i]);
             //
             assetLPMap[_NFTIDs[i]] = currentPositionID;
-            _bin = _bin.addFirst(1e18);
+            _bin = _bin.addFirst(1);
+            if(_bin.sum() > 100) revert MidasPair__LengthOrRangeWrong();
             _bins[_id] = _bin;
             unchecked {
                 ++i;
@@ -606,8 +610,9 @@ contract MidasPair721 is
             _bin = _bins[_mintId];
             if (_bin.decodeY() == 0) _tree.add(_mintId);
             _price = _getPriceFromBin(_mintId);
-            _bin = _bin.addSecond(_price);
+            _bin = _bin.addSecond(1);
             _amountYAddedToPair += _price;
+            if(_bin.sum() > 100) revert MidasPair__LengthOrRangeWrong();
             _bins[_mintId] = _bin;
             binLPMap[_mintId].push(currentPositionID);
             newMap[i] = MAX;
@@ -690,7 +695,7 @@ contract MidasPair721 is
             if (_tokenIds[i] != MAX) {
                 delete assetLPMap[_tokenIds[i]];
 
-                _bin = _bin.subFirst(1e18);
+                _bin = _bin.subFirst(1);
                 unchecked {
                     amountX += 1e18;
                 }
@@ -706,7 +711,7 @@ contract MidasPair721 is
                 binLPMap[_id] = binLPMap[_id]._findIndexAndRemove(_LPtokenID);
 
                 _price = _getPriceFromBin(_id);
-                _bin = _bin.subSecond(_price);
+                _bin = _bin.subSecond(1);
                 unchecked {
                     amountY += _price;
                 }
