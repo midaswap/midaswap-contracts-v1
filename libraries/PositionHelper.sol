@@ -58,27 +58,27 @@ library PositionHelper {
     //     }
     // }
 
-    /**
-     * @dev Removes the first item of the given array and returns it
-     * @param arr The given array
-     * @return arr The returned array
-     */
-    function _removeFirstItem(uint128[] memory arr) internal pure returns (uint128[] memory) {
-        assembly {
-            let length := mload(arr)
-            let guard := mul(length, 0x20)
-            for {
-                let offset := 0x20
-            } lt(offset, guard) {
-                offset := add(offset, 0x20)
-            } {
-                mstore(add(arr, offset), mload(add(arr, add(offset, 0x20))))
-            }
-            mstore(arr, sub(length, 1))
-        }
+    // /**
+    //  * @dev Removes the first item of the given array and returns it
+    //  * @param arr The given array
+    //  * @return arr The returned array
+    //  */
+    // function _removeFirstItem(uint128[] memory arr) internal pure returns (uint128[] memory) {
+    //     assembly {
+    //         let length := mload(arr)
+    //         let guard := mul(length, 0x20)
+    //         for {
+    //             let offset := 0x20
+    //         } lt(offset, guard) {
+    //             offset := add(offset, 0x20)
+    //         } {
+    //             mstore(add(arr, offset), mload(add(arr, add(offset, 0x20))))
+    //         }
+    //         mstore(arr, sub(length, 1))
+    //     }
             
-        return arr;
-    }
+    //     return arr;
+    // }
 
     /**
      * @dev Removes the first given item of the given array and returns it
