@@ -11,7 +11,6 @@ import {Math512Bits} from "./libraries/Math512Bits.sol";
 import {PackedUint128Math} from "./libraries/PackedUint128Math.sol";
 import {PackedUint24Math} from "./libraries/PackedUint24Math.sol";
 import {PositionHelper} from "./libraries/PositionHelper.sol";
-import {ReentrancyGuardUpgradeable} from "./libraries/ReentrancyGuardUpgradeable.sol";
 import {TokenHelper} from "./libraries/TokenHelper.sol";
 import {TreeMath} from "./libraries/TreeMath.sol";
 import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
@@ -26,12 +25,7 @@ import {ERC721Holder} from "@openzeppelin/contracts/token/ERC721/utils/ERC721Hol
 /// @author midaswap
 /// @notice This contract is the implementation of Liquidity Book Pair that also acts as the receipt token for liquidity positions
 
-contract MidasPair721 is
-    ERC721Holder,
-    ReentrancyGuardUpgradeable,
-    IMidasPair721,
-    Clone
-{
+contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
     error MidasPair__AddressWrong();
     error MidasPair__AmountInWrong();
     error MidasPair__BinSequenceWrong();
@@ -88,7 +82,6 @@ contract MidasPair721 is
 
     function initialize() external override {
         _checkSenderAddress(address(factory));
-        __ReentrancyGuard_init();
         _IDs = 0x0000000000000000000000000000000000000000000000000000ffffff000000;
     }
 
@@ -146,7 +139,7 @@ contract MidasPair721 is
     {
         return _IDs.getAll();
     }
-    
+
     /**
      * @notice Returns the Fees of the Pair
      * @return totalFees The Total Fees reserve of the Pair, including Protocol Fees
@@ -174,11 +167,11 @@ contract MidasPair721 is
     }
 
     /**
-    * @notice Return the reserves of the bin at `id`
-    * @param _id The bin id
-    * @return reserveX The reserve of tokenX of the bin
-    * @return reserveY The reserve of tokenY of the bin
-    */
+     * @notice Return the reserves of the bin at `id`
+     * @param _id The bin id
+     * @return reserveX The reserve of tokenX of the bin
+     * @return reserveY The reserve of tokenY of the bin
+     */
     function getBin(
         uint24 _id
     ) external view override returns (uint128, uint128) {
@@ -252,7 +245,7 @@ contract MidasPair721 is
     }
 
     /**
-     * @notice Returns the Liquidity Reserves of give LP Token, including LP Fees. 
+     * @notice Returns the Liquidity Reserves of give LP Token, including LP Fees.
      * @param _lpTokenID The id of the LP Token
      * @return reserveX The reserve of tokenX of the LP Token
      * @return reserveY The reserve of tokenY of the LP Token, including LP Fees.
@@ -272,8 +265,7 @@ contract MidasPair721 is
         lpAsset = lpTokenAssetsMap[_lpTokenID];
         _length = lpAsset.length;
         (originBin, binStep, fee) = lpInfos[_lpTokenID].getAll();
-        if (_lpTokenID & 0x1 != 0)
-            return (0, 0);
+        if (_lpTokenID & 0x1 != 0) return (0, 0);
         for (uint24 i; i < _length; ) {
             if (lpAsset[i] != MAX) {
                 unchecked {
@@ -300,7 +292,6 @@ contract MidasPair721 is
 
     /* ========== EXTERNAL FUNCTIONS ========== */
 
-
     /**
      * @notice Sell tokenX at best offer price.
      * Token X will be swapped for token Y.
@@ -314,11 +305,7 @@ contract MidasPair721 is
     function sellNFT(
         uint256 NFTID,
         address _to
-    ) 
-        external 
-        override 
-        // nonReentrant
-        returns (uint128 _amountOut) {
+    ) external override returns (uint128 _amountOut) {
         _checkSafetyLock();
         uint24 _tradeID;
         bytes32 _royaltyInfo;
@@ -338,10 +325,6 @@ contract MidasPair721 is
         }
 
         uint128 _LPtokenID;
-        // uint128[] memory _lps;
-        // _lps = binLPMap[_tradeID];
-        // _LPtokenID = _lps[0];
-        // binLPMap[_tradeID] = _lps._removeFirstItem();
         _LPtokenID = binLPMap[_tradeID][binLPMap[_tradeID].length - 1];
         binLPMap[_tradeID].pop();
         _checkNFTOwner(NFTID);
@@ -383,7 +366,6 @@ contract MidasPair721 is
         //
         emit SellNFT(NFTID, _to, _tradeID, _LPtokenID);
     }
-    
 
     /**
      * @notice Buy tokenX at corresponding price.
@@ -394,11 +376,7 @@ contract MidasPair721 is
      * @param NFTID The ID of NFT that user wants to buy
      * @param _to The address to send the tokenY to
      */
-    function buyNFT(uint256 NFTID, address _to) 
-        external 
-        override 
-        // nonReentrant 
-    {   
+    function buyNFT(uint256 NFTID, address _to) external override {
         _checkSafetyLock();
         uint128 _LPtokenID;
         uint24 _tradeId;
@@ -419,12 +397,10 @@ contract MidasPair721 is
         _fees = _Fees;
         _amountInToBin = _getPriceFromBin(_tradeId);
         (_feesTotal, _feesProtocol, _feesRoyalty) = _amountInToBin
-            .getFeeAmountDistributionWithRoyalty(
-                _royaltyInfo.decodeX()
-            );
+            .getFeeAmountDistributionWithRoyalty(_royaltyInfo.decodeX());
 
         delete assetLPMap[NFTID];
-        
+
         if (
             _amountInToBin + _feesTotal + _feesRoyalty >
             tokenY().received(
@@ -485,11 +461,7 @@ contract MidasPair721 is
         uint256[] calldata _NFTIDs,
         address _to,
         bool isLimited
-    )   
-        external 
-        override 
-        // nonReentrant 
-        returns (uint256, uint128) {
+    ) external override returns (uint256, uint128) {
         _checkSafetyLock();
         uint256 _length;
         uint128 currentPositionID;
@@ -503,12 +475,13 @@ contract MidasPair721 is
         uint24 originBin;
         uint24 binStep;
         (originBin, binStep) = _ids._checkBinSequence();
-        if (originBin < _IDs.getFirstUint24() || originBin < 7974122 ||  _length != _NFTIDs.length || _length > 100)
-            revert MidasPair__LengthOrRangeWrong();
-        lpInfos[currentPositionID] = originBin.setAll(
-            binStep,
-            0
-        );
+        if (
+            originBin < _IDs.getFirstUint24() ||
+            originBin < 7974122 ||
+            _length != _NFTIDs.length ||
+            _length > 100
+        ) revert MidasPair__LengthOrRangeWrong();
+        lpInfos[currentPositionID] = originBin.setAll(binStep, 0);
         lpTokenAssetsMap[currentPositionID] = _NFTIDs;
 
         uint24 _id;
@@ -521,7 +494,7 @@ contract MidasPair721 is
             //
             assetLPMap[_NFTIDs[i]] = currentPositionID;
             _bin = _bin.addFirst(1);
-            if(_bin.sum() > 100) revert MidasPair__LengthOrRangeWrong();
+            if (_bin.sum() > 100) revert MidasPair__LengthOrRangeWrong();
             _bins[_id] = _bin;
             unchecked {
                 ++i;
@@ -565,11 +538,7 @@ contract MidasPair721 is
     function mintFT(
         uint24[] calldata _ids,
         address _to
-    ) 
-        external 
-        override 
-        // nonReentrant 
-        returns (uint128, uint128) {
+    ) external override returns (uint128, uint128) {
         _checkSafetyLock();
         bytes32 _tempIDs;
         uint128 currentPositionID;
@@ -588,10 +557,7 @@ contract MidasPair721 is
         uint24 originBin;
         uint24 binStep;
         (originBin, binStep) = _ids._checkBinSequence();
-        lpInfos[currentPositionID] = originBin.setAll(
-            binStep,
-            0
-        );
+        lpInfos[currentPositionID] = originBin.setAll(binStep, 0);
 
         if (
             _ids[_length - 1] > _tempIDs.getSecondUint24() ||
@@ -612,7 +578,7 @@ contract MidasPair721 is
             _price = _getPriceFromBin(_mintId);
             _bin = _bin.addSecond(1);
             _amountYAddedToPair += _price;
-            if(_bin.sum() > 100) revert MidasPair__LengthOrRangeWrong();
+            if (_bin.sum() > 100) revert MidasPair__LengthOrRangeWrong();
             _bins[_mintId] = _bin;
             binLPMap[_mintId].push(currentPositionID);
             newMap[i] = MAX;
@@ -665,11 +631,7 @@ contract MidasPair721 is
         uint128 _LPtokenID,
         address _nftReceiver,
         address _to
-    )   
-        external 
-        override 
-        // nonReentrant 
-        returns (uint128 amountX, uint128 amountY) {
+    ) external override returns (uint128 amountX, uint128 amountY) {
         uint256[] memory _tokenIds;
         uint256 _binIdLength;
         uint24 originBin;
@@ -678,7 +640,7 @@ contract MidasPair721 is
 
         _tokenIds = lpTokenAssetsMap[_LPtokenID];
         _binIdLength = _tokenIds.length;
-        if(_binIdLength == 0) revert MidasPair__LengthOrRangeWrong();
+        if (_binIdLength == 0) revert MidasPair__LengthOrRangeWrong();
         (originBin, binStep, amountFee) = lpInfos[_LPtokenID].getAll();
         _checkLPTOwner(_LPtokenID, address(this));
         delete lpTokenAssetsMap[_LPtokenID];
@@ -740,16 +702,11 @@ contract MidasPair721 is
         tokenY().safeTransfer(_to, amountY);
     }
 
-    /** 
+    /**
      * @notice Collect the protocol fees and send them to the fee recipient.
      * @return amountY The amount of token Y collected and sent to the fee recipient
      */
-    function collectProtocolFees()
-        external
-        override
-        //nonReentrant
-        returns (uint128 amountY)
-    {
+    function collectProtocolFees() external override returns (uint128 amountY) {
         address _feeRecipient;
         bytes32 fees;
         _feeRecipient = factory.feeRecipient();
@@ -760,7 +717,7 @@ contract MidasPair721 is
         tokenY().safeTransfer(_feeRecipient, amountY);
     }
 
-    /** 
+    /**
      * @notice Collect the protocol fees and send them to the fee recipient.
      * @param _LPtokenID The LP Token ID that user claims fee from
      * @param _to The address that will receive tokenYs from the pool
@@ -769,11 +726,7 @@ contract MidasPair721 is
     function collectLPFees(
         uint128 _LPtokenID,
         address _to
-    )   
-        external 
-        override 
-        // nonReentrant 
-        returns (uint128 amountFee) {
+    ) external override returns (uint128 amountFee) {
         bytes32 _lpInfo;
         _checkLPTOwner(_LPtokenID, _to);
         _lpInfo = lpInfos[_LPtokenID];
@@ -785,14 +738,13 @@ contract MidasPair721 is
         emit ClaimFee(_LPtokenID, _to, amountFee);
     }
 
-    /** 
+    /**
      * @notice Collect the royalty fees and send them to the fee recipients.
      * @return _royaltyFees The total amount of token Y collected and sent to the fee recipients
      */
     function collectRoyaltyFees()
         external
         override
-        // nonReentrant
         returns (uint128 _royaltyFees)
     {
         bytes32 _royaltyInfo;
@@ -809,18 +761,18 @@ contract MidasPair721 is
         }
     }
 
-    /** 
+    /**
      * @notice Reset the royalty information of the pair
      * @dev This function can only be called by factory
      * @param _newRate The new royalty rate
-     * @param newrecipients The new royalty recipients 
+     * @param newrecipients The new royalty recipients
      * @param newshares The new royalty shares that each recipient owns
      */
     function updateRoyalty(
         uint128 _newRate,
         address payable[] calldata newrecipients,
         uint256[] calldata newshares
-    ) external override{
+    ) external override {
         _checkSenderAddress(address(factory));
         creators = newrecipients;
         creatorShares = newshares;
@@ -828,16 +780,15 @@ contract MidasPair721 is
         emit NewRoyaltyFee(_newRate);
     }
 
-    /** 
+    /**
      * @notice Change the status of the pair lock
      * @dev This function can only be called by factory
      * @param lock The new lock status
      */
-    function updateSafetyLock(bool lock) external override{
+    function updateSafetyLock(bool lock) external override {
         _checkSenderAddress(address(factory));
         safetyLock = lock;
     }
-
 
     /**
      * @notice Flash loan tokenXs from the pool to a receiver contract and execute a callback function.
@@ -850,10 +801,7 @@ contract MidasPair721 is
         IMidasFlashLoanCallback receiver,
         uint256[] calldata _tokenIds,
         bytes calldata data
-    )   external 
-        override 
-        nonReentrant 
-    {   
+    ) external override {
         _checkSenderAddress(address(factory));
         uint256 length;
         length = _tokenIds.length;
@@ -930,8 +878,7 @@ contract MidasPair721 is
      */
     function _checkNFTOwner(uint256 _NFTID) internal view {
         if (
-            assetLPMap[_NFTID] != 0 ||
-            tokenX().ownerOf(_NFTID) != address(this)
+            assetLPMap[_NFTID] != 0 || tokenX().ownerOf(_NFTID) != address(this)
         ) revert MidasPair__NFTOwnershipWrong();
     }
 
@@ -950,13 +897,11 @@ contract MidasPair721 is
      * @param _target The address to be compared
      */
     function _checkSenderAddress(address _target) internal view {
-        if (_target != msg.sender)
-            revert MidasPair__AddressWrong();
+        if (_target != msg.sender) revert MidasPair__AddressWrong();
     }
 
     function _checkSafetyLock() internal view {
-        if (safetyLock == true) 
-            revert MidasPair__SafetyLockWrong();
+        if (safetyLock == true) revert MidasPair__SafetyLockWrong();
     }
 
     /**
@@ -1072,7 +1017,4 @@ contract MidasPair721 is
         }
         lpTokenAssetsMap[_lpTokenID][_index] = _NFTID;
     }
-
-
-
 }
