@@ -47,16 +47,15 @@ library PositionHelper {
         assembly {
             let length := mload(arr)
             let guard := mul(length, 0x20)
-            let j
             for {
                 let offset := 0x20
             } lt(offset, guard) {
                 offset := add(offset, 0x20)
             } {
                 if eq(mload(add(arr, offset)), target) {
-                    j := 0x20
+                    mstore(add(arr, offset), mload(add(arr, guard)))
+                    break
                 }
-                mstore(add(arr, offset), mload(add(arr, add(offset, j))))
             }
             mstore(arr, sub(length, 1))
         }
