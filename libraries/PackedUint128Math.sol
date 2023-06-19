@@ -268,7 +268,6 @@ library PackedUint128Math {
     //     return encode(x1, x2);
     // }
 
-
     /**
      * @dev Adds an encoded bytes32 and one uint128, reverting on overflow on the uint128
      * @param a The bytes32 encoded as follows:
@@ -320,7 +319,7 @@ library PackedUint128Math {
 
         checkSubOverFlow(z, a);
     }
-    
+
     /**
      * @dev Subtracts an encoded bytes32 by one uint128, reverting on overflow on the uint128
      * @param a The bytes32 encoded as follows:
@@ -399,11 +398,11 @@ library PackedUint128Math {
         assembly {
             let x1 := and(z, MASK_128)
             let x2 := shr(OFFSET, z)
-            result := add(x1,x2)
+            result := add(x1, x2)
         }
     }
 
-    /** 
+    /**
      * Checks overflow in bytes32 add
      * @param z The bytes32 after add
      * @param a The bytes32 before add
@@ -414,7 +413,7 @@ library PackedUint128Math {
         }
     }
 
-    /** 
+    /**
      * Checks overflow in bytes32 sub
      * @param z The bytes32 after sub
      * @param a The bytes32 before sub

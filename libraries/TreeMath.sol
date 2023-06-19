@@ -4,11 +4,8 @@ pragma solidity 0.8.10;
 
 import {BitMath} from "./BitMath.sol";
 
-// import {PackedUint24Math} from "./PackedUint24Math.sol";
-
 /**
  * @title Liquidity Book Tree Math Library
- * @author Trader Joe
  * @notice This library contains functions to interact with a tree of TreeUint24.
  */
 library TreeMath {
@@ -73,10 +70,7 @@ library TreeMath {
      * @param tree The tree
      * @param id The id
      */
-    function remove(
-        TreeUint24 storage tree,
-        uint24 id
-    ) internal {
+    function remove(TreeUint24 storage tree, uint24 id) internal {
         bytes32 key2 = bytes32(uint256(id) >> 8);
 
         bytes32 leaves = tree.level2[key2];
@@ -104,7 +98,7 @@ library TreeMath {
     }
 
     /**
-     * @dev Returns the first id in the tree that is lower than the given id.
+     * @dev Returns the first id in the tree that is lower than or equal to the given id.
      * It will return type(uint24).max if there is no such id.
      * @param tree The tree
      * @param id The id
@@ -173,7 +167,7 @@ library TreeMath {
     }
 
     /**
-     * @dev Returns the first id in the tree that is higher than the given id.
+     * @dev Returns the first id in the tree that is higher than or equal to the given id.
      * It will return 0 if there is no such id.
      * @param tree The tree
      * @param id The id
@@ -272,7 +266,6 @@ library TreeMath {
             return uint256(leaves).closestBitLeft(bit + 1);
         }
     }
-
 
     /**
      * @dev Returns floorPrice bin and bestOffer bin in given trees

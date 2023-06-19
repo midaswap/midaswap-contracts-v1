@@ -5,7 +5,6 @@ pragma solidity 0.8.10;
 import {BitMath} from "./BitMath.sol";
 
 /// @title Midas
-/// @author midaswap
 /// @notice Helper contract used for power and log calculations
 library Uint128x128Math {
     using BitMath for uint256;

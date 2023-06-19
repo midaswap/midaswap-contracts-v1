@@ -3,10 +3,8 @@
 pragma solidity 0.8.10;
 
 /// @title Midas
-/// @author midaswap
 /// @notice Helper contract used for fees calculation
 library FeeHelper {
-    
     /**
      * @notice Internal function to calculate the fees
      * @param _amount The total amount (fee + fee base)
@@ -31,11 +29,7 @@ library FeeHelper {
                 uint128(
                     (uint256(_amount) * _fee + _denominator - 1) / _denominator
                 );
-            return
-                getFeeAmountDistributionWithRoyalty(
-                    _feeBase,
-                    _rateRoyalty
-                );
+            return getFeeAmountDistributionWithRoyalty(_feeBase, _rateRoyalty);
         }
     }
 

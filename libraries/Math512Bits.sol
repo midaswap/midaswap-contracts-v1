@@ -6,8 +6,8 @@ pragma solidity 0.8.10;
 /// @notice Helper contract used for full precision calculations
 library Math512Bits {
     error Math512Bits__MulShiftOverflow();
-    // error Math512Bits__MulDivOverflow();
 
+    // error Math512Bits__MulDivOverflow();
 
     /**
      * @notice Calculates floor(x * 1e18 / 2**128) with full precision

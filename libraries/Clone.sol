@@ -5,7 +5,6 @@ pragma solidity 0.8.10;
 /**
  * @title Clone
  * @notice Class with helper read functions for clone with immutable args.
- * @author Midas
  * @author Solady (https://github.com/vectorized/solady/blob/main/src/utils/Clone.sol)
  * @author Adapted from clones with immutable args by zefram.eth, Saw-mon & Natalie
  * (https://github.com/Saw-mon-and-Natalie/clones-with-immutable-args)

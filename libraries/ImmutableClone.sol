@@ -5,7 +5,6 @@ pragma solidity 0.8.10;
 /**
  * @title Liquidity Book Immutable Clone Library
  * @notice Minimal immutable proxy library.
- * @author Midas
  * @author Solady (https://github.com/vectorized/solady/blob/main/src/utils/LibClone.sol)
  * @author Minimal proxy by 0age (https://github.com/0age)
  * @author Clones with immutable args by wighawag, zefram.eth, Saw-mon & Natalie
