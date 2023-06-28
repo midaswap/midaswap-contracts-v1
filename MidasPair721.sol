@@ -265,7 +265,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
         lpAsset = lpTokenAssetsMap[_lpTokenID];
         _length = lpAsset.length;
         (originBin, binStep, fee) = lpInfos[_lpTokenID].getAll();
-        if (_lpTokenID & 0x1 != 0) return (0, 0);
+        if (_lpTokenID << 255 != 0) return (0, 0);
         for (uint24 i; i < _length; ) {
             if (lpAsset[i] != MAX) {
                 unchecked {
@@ -412,7 +412,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
 
         _royaltyInfo = _royaltyInfo.addSecond(_feesRoyalty);
 
-        if (_LPtokenID & 0x1 == 0) {
+        if (_LPtokenID << 255 == 0) {
             // NFT from NFT LPs
             if (_bin.decodeY() == 0) _tree.add(_tradeId);
             binLPMap[_tradeId].push(_LPtokenID);
@@ -468,7 +468,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
         _length = _ids.length;
         currentPositionID = _IDs.getUint128();
         unchecked {
-            (currentPositionID & 0x1 == 0) == (isLimited)
+            (currentPositionID << 255 == 0) == (isLimited)
                 ? currentPositionID += 1
                 : currentPositionID += 2;
         }
@@ -550,7 +550,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
         _length = _ids.length;
 
         unchecked {
-            currentPositionID & 0x1 == 0
+            currentPositionID << 255 == 0
                 ? currentPositionID += 2
                 : currentPositionID += 1;
         }
@@ -669,7 +669,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
                     _nftReceiver,
                     _tokenIds[i]
                 );
-            } else if (_LPtokenID & 0x1 == 0) {
+            } else if (_LPtokenID << 255 == 0) {
                 binLPMap[_id] = binLPMap[_id]._findIndexAndRemove(_LPtokenID);
 
                 _price = _getPriceFromBin(_id);
