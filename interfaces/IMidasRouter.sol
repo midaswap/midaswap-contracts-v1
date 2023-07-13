@@ -46,6 +46,7 @@ interface IMidasRouter {
         address _tokenX,
         address _tokenY,
         uint256[] calldata _tokenIds,
+        uint128 _minOutput,
         uint256 _deadline
     ) external returns (uint128 _ftAmount);
 
@@ -53,6 +54,7 @@ interface IMidasRouter {
         address _tokenX,
         address _tokenY,
         uint256[] calldata _tokenIds,
+        uint128 _minOutput,
         uint256 _deadline
     ) external payable returns (uint128 _ftAmount);
 
@@ -60,6 +62,7 @@ interface IMidasRouter {
         address _tokenX,
         address _tokenY,
         uint256[] calldata _tokenIds,
+        uint128 _maxInput,
         uint256 _deadline
     ) external returns (uint128 _ftAmount);
 
@@ -67,6 +70,7 @@ interface IMidasRouter {
         address _tokenX,
         address _tokenY,
         uint256[] calldata _tokenIds,
+        uint128 _maxInput,
         uint256 _deadline
     ) external payable returns (uint128 _ftAmount);
 
