@@ -19,6 +19,7 @@ contract MidasRouter is IMidasRouter {
     error Router__WrongPair();
     error Router__WrongAmount();
     error Router__Expired();
+    error Router__SlippageTooHigh();
 
     using TokenHelper for IERC20;
     using TokenHelper for IWETH;
@@ -167,6 +168,7 @@ contract MidasRouter is IMidasRouter {
         address _tokenX,
         address _tokenY,
         uint256[] calldata _tokenIds,
+        uint128 _minOutput,
         uint256 _deadline
     ) external override returns (uint128 _ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
@@ -176,11 +178,13 @@ contract MidasRouter is IMidasRouter {
         _length = _tokenIds.length;
         for (uint256 i; i < _length; ) {
             IERC721(_tokenX).safeTransferFrom(msg.sender, _pair, _tokenIds[i]);
-            _ftAmount = IMidasPair721(_pair).sellNFT(_tokenIds[i], msg.sender);
+            _ftAmount += IMidasPair721(_pair).sellNFT(_tokenIds[i], msg.sender);
             unchecked {
                 ++i;
             }
         }
+        if(_ftAmount < _minOutput) revert Router__SlippageTooHigh();
+
     }
 
     /// @notice The function to sell ERC721 and get ETH
@@ -188,6 +192,7 @@ contract MidasRouter is IMidasRouter {
         address _tokenX,
         address _tokenY,
         uint256[] calldata _tokenIds,
+        uint128 _minOutput,
         uint256 _deadline
     ) external payable override returns (uint128 _ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
@@ -198,7 +203,7 @@ contract MidasRouter is IMidasRouter {
         _length = _tokenIds.length;
         for (uint256 i; i < _length; ) {
             IERC721(_tokenX).safeTransferFrom(msg.sender, _pair, _tokenIds[i]);
-            _ftAmount = IMidasPair721(_pair).sellNFT(
+            _ftAmount += IMidasPair721(_pair).sellNFT(
                 _tokenIds[i],
                 address(this)
             );
@@ -208,6 +213,7 @@ contract MidasRouter is IMidasRouter {
                 ++i;
             }
         }
+        if(_ftAmount < _minOutput) revert Router__SlippageTooHigh();
     }
 
     /// @notice The function to buy ERC721 from the pair
@@ -220,6 +226,7 @@ contract MidasRouter is IMidasRouter {
         address _tokenX,
         address _tokenY,
         uint256[] calldata _tokenIds,
+        uint128 _maxInput,
         uint256 _deadline
     ) external override returns (uint128 _ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
@@ -235,6 +242,8 @@ contract MidasRouter is IMidasRouter {
                 ++i;
             }
         }
+        if(_ftAmount > _maxInput) revert Router__SlippageTooHigh();
+
     }
 
     /// @notice The function to buy ERC721 with ETH from the pair
@@ -242,6 +251,7 @@ contract MidasRouter is IMidasRouter {
         address _tokenX,
         address _tokenY,
         uint256[] calldata _tokenIds,
+        uint128 _maxInput,
         uint256 _deadline
     ) external payable override returns (uint128 _ftAmount) {
         if (_deadline < block.timestamp) revert Router__Expired();
@@ -259,6 +269,7 @@ contract MidasRouter is IMidasRouter {
                 ++i;
             }
         }
+        if(_ftAmount > _maxInput) revert Router__SlippageTooHigh();
     }
 
     /// @notice The function to open limit order
