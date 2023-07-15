@@ -207,12 +207,12 @@ contract MidasRouter is IMidasRouter {
                 _tokenIds[i],
                 address(this)
             );
-            weth.withdraw(_ftAmount);
-            _safeTransferETH(msg.sender, _ftAmount);
             unchecked {
                 ++i;
             }
         }
+        weth.withdraw(_ftAmount);
+        _safeTransferETH(msg.sender, _ftAmount);
         if(_ftAmount < _minOutput) revert Router__SlippageTooHigh();
     }
 
