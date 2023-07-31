@@ -739,7 +739,8 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
     }
 
     /**
-     * @notice Collect the royalty fees and send them to the fee recipients.
+     * @notice Collect the royalty fees and send them to the fee recipients 
+     * @notice 10% of the royalty fees will be reserved as protocol fee
      * @return _royaltyFees The total amount of token Y collected and sent to the fee recipients
      */
     function collectRoyaltyFees()
@@ -748,8 +749,12 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
         returns (uint128 _royaltyFees)
     {
         bytes32 _royaltyInfo;
+        uint128 protocolFees;
         _royaltyInfo = _RoyaltyInfo;
         _royaltyFees = _royaltyInfo.decodeY();
+        protocolFees = _royaltyFees / 10;
+        _royaltyFees -= protocolFees;
+        _Fees = _Fees.add(protocolFees, protocolFees);
         _RoyaltyInfo = _royaltyInfo.setSecond(0);
         unchecked {
             for (uint256 i; i < creators.length; ++i) {
