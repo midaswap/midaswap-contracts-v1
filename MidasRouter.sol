@@ -89,7 +89,7 @@ contract MidasRouter is IMidasRouter {
         _pair = factory.getPairERC721(_tokenX, _tokenY);
         _amount = _getAmountsToAdd(_pair, _ids);
         IERC20(_tokenY).safeTransferFrom(msg.sender, _pair, _amount);
-        (idAmount, lpTokenId) = IMidasPair721(_pair).mintFT(_ids, msg.sender);
+        (idAmount, lpTokenId) = IMidasPair721(_pair).mintFT(_ids, msg.sender, false);
     }
 
     /// @notice The function to add ETH liquidity into pair
@@ -107,7 +107,7 @@ contract MidasRouter is IMidasRouter {
         if (_tokenY != address(weth)) revert Router__WrongPair();
         //if (msg.value < _amount) revert Router__WrongAmount();
         _wethDepositAndTransfer(_pair, msg.value);
-        (idAmount, lpTokenId) = IMidasPair721(_pair).mintFT(_ids, msg.sender);
+        (idAmount, lpTokenId) = IMidasPair721(_pair).mintFT(_ids, msg.sender, false);
     }
 
     /// @notice The function to remove liquidity from pair
@@ -272,7 +272,7 @@ contract MidasRouter is IMidasRouter {
         if(_ftAmount > _maxInput) revert Router__SlippageTooHigh();
     }
 
-    /// @notice The function to open limit order
+    /// @notice The function to open limit sell order
     /// @param _tokenX      The address of ERC721 assets
     /// @param _tokenY      The address of ERC20 assets
     /// @param _ids         The array of bin Ids where to add liquidity
@@ -280,7 +280,7 @@ contract MidasRouter is IMidasRouter {
     /// @param _deadline    The deadline of the tx
     /// @return idAmount    The amount of ids
     /// @return lpTokenId   The ID of the LP token
-    function openLimitOrder(
+    function openLimitSellOrder(
         address _tokenX,
         address _tokenY,
         uint24[] calldata _ids,
@@ -306,14 +306,38 @@ contract MidasRouter is IMidasRouter {
         );
     }
 
-    /// @notice The function to open multiple limit orders
+
+
+    /// @notice The function to open limit buy order
+    /// @param _tokenX      The address of ERC721 assets
+    /// @param _tokenY      The address of ERC20 assets
+    /// @param _ids         The array of bin Ids where to add liquidity
+    /// @param _deadline    The deadline of the tx
+    /// @return idAmount    The amount of ids
+    /// @return lpTokenId   The ID of the LP token
+    function openLimitBuyOrder(
+        address _tokenX,
+        address _tokenY,
+        uint24[] calldata _ids,
+        uint256 _deadline
+    ) external override returns (uint256 idAmount, uint128 lpTokenId) {
+        if (_deadline < block.timestamp) revert Router__Expired();
+        address _pair;
+        uint256 _amount;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _amount = _getAmountsToAdd(_pair, _ids);
+        IERC20(_tokenY).safeTransferFrom(msg.sender, _pair, _amount);
+        (idAmount, lpTokenId) = IMidasPair721(_pair).mintFT(_ids, msg.sender, true);
+    }
+
+    /// @notice The function to open multiple limit sell orders
     /// @param _tokenX        The address of ERC721 assets
     /// @param _tokenY        The address of ERC20 assets
     /// @param _ids[]         The array of bin ids where to add liquidity
     /// @param _tokenIds[]    The array of NFT tokenIds
     /// @param _deadline      The deadline of the tx
     /// @return lpTokenIds  The ids of the LP tokens
-    function openMultiLimitOrders(
+    function openMultiLimitSellOrders(
         address _tokenX,
         address _tokenY,
         uint24[] calldata _ids,

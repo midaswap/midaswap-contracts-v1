@@ -309,6 +309,9 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
         _checkSafetyLock();
         uint24 _tradeID;
         bytes32 _royaltyInfo;
+        bytes32 _fees;
+        bytes32 _reserves;
+        bytes32 _bin;
         uint128 _amountOutOfBin;
         uint128 _feesTotal;
         uint128 _feesProtocol;
@@ -316,6 +319,9 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
 
         _tradeID = _IDs.getFirstUint24();
         _royaltyInfo = _RoyaltyInfo;
+        _fees = _Fees;
+        _reserves = _Reserves;
+        _bin = _bins[_tradeID];
         _amountOutOfBin = _getPriceFromBin(_tradeID);
         (_feesTotal, _feesProtocol, _feesRoyalty) = _amountOutOfBin
             .getFeeBaseAndDistribution(_royaltyInfo.decodeX());
@@ -329,7 +335,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
         binLPMap[_tradeID].pop();
         _checkNFTOwner(NFTID);
         //
-        assetLPMap[NFTID] = _LPtokenID;
+        // assetLPMap[NFTID] = _LPtokenID;
 
         // update _RoyaltyInfo
         _royaltyInfo = _royaltyInfo.addSecond(_feesRoyalty);
@@ -337,30 +343,55 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
 
         _updateAssetMapSell(_LPtokenID, _tradeID, NFTID);
 
-        _updateLpInfo(_LPtokenID, _feesTotal - _feesProtocol);
+        // _updateLpInfo(_LPtokenID, _feesTotal - _feesProtocol);
 
-        // update _Fees
-        bytes32 _fees;
-        _fees = _Fees;
-        _fees = _fees.add(_feesTotal, _feesProtocol);
-        _Fees = _fees;
+        // // update _Fees
+        // bytes32 _fees;
+        // _fees = _Fees;
+        // _fees = _fees.add(_feesTotal, _feesProtocol);
+        // _Fees = _fees;
 
-        // update _Reserves
-        bytes32 _reserves;
-        _reserves = _Reserves;
-        _reserves = _reserves.addFirst(1e18).subSecond(_amountOutOfBin);
-        _Reserves = _reserves;
+        // // update _Reserves
+        // bytes32 _reserves;
+        // _reserves = _Reserves;
+        // _reserves = _reserves.addFirst(1e18).subSecond(_amountOutOfBin);
+        // _Reserves = _reserves;
 
-        // update _bins
-        bytes32 _bin;
-        _bin = _bins[_tradeID];
-        _bin = _bin.addFirst(1).subSecond(1);
-        _bins[_tradeID] = _bin;
-        // update trees
-        if (_bin.decodeX() == 1) _tree2.add(_tradeID);
+        // // update _bins
+        // bytes32 _bin;
+        // _bin = _bins[_tradeID];
+        // _bin = _bin.addFirst(1).subSecond(1);
+        // _bins[_tradeID] = _bin;
+        // // update trees
+        // if (_bin.decodeX() == 1) _tree2.add(_tradeID);
+        // if (_bin.decodeY() == 0) _tree.remove(_tradeID);
+
+
+        if (_LPtokenID << 127 == 0) {
+            if (_bin.decodeX() == 0) _tree2.add(_tradeID);
+            assetLPMap[NFTID] = _LPtokenID;
+
+            _updateLpInfo(_LPtokenID, _feesTotal - _feesProtocol);
+            _fees = _fees.add(_feesTotal, _feesProtocol);
+            _reserves = _reserves.addFirst(1e18).subSecond(_amountOutOfBin);
+            _bin = _bin.addFirst(1).subSecond(1);
+        } else {
+            _fees = _fees.add(_feesTotal, _feesTotal);
+            _reserves = _reserves.addFirst(1e18).subSecond(_amountOutOfBin);
+            _bin = _bin.subSecond(1);
+        }
         if (_bin.decodeY() == 0) _tree.remove(_tradeID);
+
+
+
+
+
         // update _IDs
         _updateIDs(0);
+
+        _bins[_tradeID] = _bin;
+        _Reserves = _reserves;
+        _Fees = _fees;
 
         tokenY().safeTransfer(_to, _amountOut);
         //
@@ -423,9 +454,12 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
             _bin = _bin.subFirst(1).addSecond(1);
         } else {
             // NFT from Limited Orders
-            _updateLpInfo(_LPtokenID, _amountInToBin);
-            _fees = _fees.add(_amountInToBin + _feesTotal, _feesTotal);
-            _reserves = _reserves.subFirst(1e18);
+            // _updateLpInfo(_LPtokenID, _amountInToBin);
+            // _fees = _fees.add(_amountInToBin + _feesTotal, _feesTotal);
+            // _reserves = _reserves.subFirst(1e18);
+            // _bin = _bin.subFirst(1);
+            _fees = _fees.add(_feesTotal, _feesTotal);
+            _reserves = _reserves.subFirst(1e18).addSecond(_amountInToBin);
             _bin = _bin.subFirst(1);
         }
 
@@ -471,6 +505,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
             (currentPositionID << 127 == 0) == (isLimited)
                 ? currentPositionID += 1
                 : currentPositionID += 2;
+            if (currentPositionID & 0x03 == 3) currentPositionID += 2;
         }
         uint24 originBin;
         uint24 binStep;
@@ -532,12 +567,14 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
      * router that will also perform safety checks.
      * @param _ids The BinID List that user want to add liquidity to
      * @param _to The address that will receive the LP Token
+     * @param isLimited Whether user is makeing limited order (true) or provide liquidity as LP (false)
      * @return _amount The amounts of token Y received by the pool
      * @return _lpTokenID The ID of the LPToken the user will receive
      */
     function mintFT(
         uint24[] calldata _ids,
-        address _to
+        address _to,
+        bool isLimited
     ) external override returns (uint128, uint128) {
         _checkSafetyLock();
         bytes32 _tempIDs;
@@ -550,9 +587,10 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
         _length = _ids.length;
 
         unchecked {
-            currentPositionID << 127 == 0
-                ? currentPositionID += 2
-                : currentPositionID += 1;
+            (currentPositionID << 127 == 0) == (isLimited)
+                ? currentPositionID += 1
+                : currentPositionID += 2;
+            if (currentPositionID & 0x03 == 1) currentPositionID += 2;
         }
         uint24 originBin;
         uint24 binStep;
@@ -567,7 +605,6 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
 
         bytes32 _bin;
         uint24 _mintId;
-        uint128 _price;
         uint256[] memory newMap;
         newMap = new uint256[](_length);
 
@@ -575,9 +612,8 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
             _mintId = _ids[i];
             _bin = _bins[_mintId];
             if (_bin.decodeY() == 0) _tree.add(_mintId);
-            _price = _getPriceFromBin(_mintId);
             _bin = _bin.addSecond(1);
-            _amountYAddedToPair += _price;
+            _amountYAddedToPair += _getPriceFromBin(_mintId);
             if (_bin.sum() > 100) revert MidasPair__LengthOrRangeWrong();
             _bins[_mintId] = _bin;
             binLPMap[_mintId].push(currentPositionID);
@@ -655,30 +691,30 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
             }
             _bin = _bins[_id];
             if (_tokenIds[i] != MAX) {
-                delete assetLPMap[_tokenIds[i]];
-
-                _bin = _bin.subFirst(1);
+                if (_LPtokenID & 0x03 != 3){
+                    delete assetLPMap[_tokenIds[i]];
+                    _bin = _bin.subFirst(1);
+                    if (_bin.decodeX() == 0) _tree2.remove(_id);
+                }
                 unchecked {
                     amountX += 1e18;
                 }
-
-                if (_bin.decodeX() == 0) _tree2.remove(_id);
-
                 tokenX().safeTransferFrom(
                     address(this),
                     _nftReceiver,
                     _tokenIds[i]
                 );
-            } else if (_LPtokenID << 127 == 0) {
-                binLPMap[_id] = binLPMap[_id]._findIndexAndRemove(_LPtokenID);
+            } else {
+                if (_LPtokenID & 0x03 != 1){
+                    binLPMap[_id] = binLPMap[_id]._findIndexAndRemove(_LPtokenID);
+                    _bin = _bin.subSecond(1);
+                    if (_bin.decodeY() == 0) _tree.remove(_id);
+                }
 
                 _price = _getPriceFromBin(_id);
-                _bin = _bin.subSecond(1);
                 unchecked {
                     amountY += _price;
                 }
-
-                if (_bin.decodeY() == 0) _tree.remove(_id);
             }
             _bins[_id] = _bin;
 
@@ -764,6 +800,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
                 );
             }
         }
+
     }
 
     /**
