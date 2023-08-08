@@ -74,7 +74,7 @@ interface IMidasRouter {
         uint256 _deadline
     ) external payable returns (uint128 _ftAmount);
 
-    function openLimitOrder(
+    function openLimitSellOrder(
         address _tokenX,
         address _tokenY,
         uint24[] calldata _ids,
@@ -82,7 +82,14 @@ interface IMidasRouter {
         uint256 _deadline
     ) external returns (uint256 idAmount, uint128 lpTokenId);
 
-    function openMultiLimitOrders(
+    function openLimitBuyOrder(
+        address _tokenX,
+        address _tokenY,
+        uint24[] calldata _ids,
+        uint256 _deadline
+    ) external returns (uint256 idAmount, uint128 lpTokenId);
+
+    function openMultiLimitSellOrders(
         address _tokenX,
         address _tokenY,
         uint24[] calldata _ids,

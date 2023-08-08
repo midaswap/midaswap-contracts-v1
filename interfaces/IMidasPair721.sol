@@ -127,7 +127,8 @@ interface IMidasPair721 {
 
     function mintFT(
         uint24[] calldata ids,
-        address to
+        address to,
+        bool isLimited
     ) external returns (uint128 amountIn, uint128 LPtokenID);
 
     function burn(
