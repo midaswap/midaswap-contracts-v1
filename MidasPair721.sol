@@ -57,7 +57,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
     bytes32 private _IDs;
     bool private safetyLock;
 
-    address payable[] private creators;
+    address[] private creators;
     uint256[] private creatorShares;
 
     TreeMath.TreeUint24 private _tree;
@@ -812,7 +812,7 @@ contract MidasPair721 is ERC721Holder, IMidasPair721, Clone {
      */
     function updateRoyalty(
         uint128 _newRate,
-        address payable[] calldata newrecipients,
+        address[] calldata newrecipients,
         uint256[] calldata newshares
     ) external override {
         _checkSenderAddress(address(factory));
