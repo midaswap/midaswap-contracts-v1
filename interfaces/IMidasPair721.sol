@@ -148,7 +148,7 @@ interface IMidasPair721 {
 
     function updateRoyalty(
         uint128 _newRate,
-        address payable[] calldata newrecipients,
+        address[] calldata newrecipients,
         uint256[] calldata newshares
     ) external;
 

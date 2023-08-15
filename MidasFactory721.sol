@@ -7,9 +7,10 @@ import {NoDelegateCall} from "./NoDelegateCall.sol";
 import {IMidasPair721} from "./interfaces/IMidasPair721.sol";
 import {IMidasFactory721} from "./interfaces/IMidasFactory721.sol";
 import {IMidasFlashLoanCallback} from "./interfaces/IMidasFlashLoanCallback.sol";
-import {IRoyaltyEngineV1} from "./interfaces/IRoyaltyEngineV1.sol";
 import {ImmutableClone} from "./libraries/ImmutableClone.sol";
 
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import {IERC2981} from "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
@@ -23,8 +24,6 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     address private lptImplementation;
     bool private createPairLock;
 
-    IRoyaltyEngineV1 private royaltyEngine;
-
     mapping(address => mapping(address => address))
         public
         override getPairERC721;
@@ -32,13 +31,9 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         public
         override getLPTokenERC721;
 
-    constructor(
-        address _royaltyEngine
-    ) {
+    constructor() {
         owner = msg.sender;
         emit OwnerChanged(address(0), msg.sender);
-
-        royaltyEngine = IRoyaltyEngineV1(_royaltyEngine);
         createPairLock = true;
     }
 
@@ -96,16 +91,19 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
     function _setRoyaltyInfo(address _tokenX, address _tokenY, bool isZero) internal {
         
         address _pair = getPairERC721[_tokenX][_tokenY];
-        address payable[] memory _recipients;
+        address[] memory _recipients;
         uint256[] memory _shares;
-        if(isZero){
+        bool supportEIP2981 = IERC165(_tokenX).supportsInterface(0x2a55205a);
+        if(isZero || supportEIP2981 == false){
             IMidasPair721(_pair).updateRoyalty(
                 uint128(0),
                 _recipients,
                 _shares
             );
-        }else{
-            (_recipients, _shares) = royaltyEngine.getRoyaltyView(_tokenX, 1, 1e18);
+        } else {
+            _recipients = new address[](1);
+            _shares = new uint256[](1);
+            (_recipients[0], _shares[0]) = IERC2981(_tokenX).royaltyInfo(1, 1e18);
 
             if (_shares.length != 0) {
                 uint256 _shareSum;
@@ -171,11 +169,6 @@ contract MidasFactory721 is IMidasFactory721, NoDelegateCall {
         address _oldLptImplementation = lptImplementation;
         lptImplementation = _newLptImplementation;
         emit LptImplementationSet(_oldLptImplementation, _newLptImplementation);
-    }
-
-    function setRoyaltyEngine(address _newRoyaltyEngine) external override {
-        require(msg.sender == owner);
-        royaltyEngine = IRoyaltyEngineV1(_newRoyaltyEngine);
     }
 
     function setCreatePairLock(bool _newLock) external {

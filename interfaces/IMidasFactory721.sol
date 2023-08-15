@@ -41,8 +41,6 @@ interface IMidasFactory721 {
 
     function setOwner(address _owner) external;
 
-    function setRoyaltyEngine(address _newRoyaltyEngine) external;
-
     function setRoyaltyInfo(address _tokenX, address _tokenY, bool isZero) external;
 
     function setPairImplementation(address _newPairImplementation) external;
