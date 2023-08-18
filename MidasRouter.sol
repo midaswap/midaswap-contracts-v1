@@ -318,7 +318,7 @@ contract MidasRouter is IMidasRouter {
         address _tokenY,
         uint24[] calldata _ids,
         uint256 _deadline
-    ) public override returns (uint256 idAmount, uint128 lpTokenId) {
+    ) external override returns (uint256 idAmount, uint128 lpTokenId) {
         if (_deadline < block.timestamp) revert Router__Expired();
         address _pair;
         uint256 _amount;
