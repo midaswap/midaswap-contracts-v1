@@ -1,4 +1,4 @@
-# midaswap-protocol-1.2
+# midaswap-protocol-v1
 
 This repository contains the Midas721 contracts.
 
