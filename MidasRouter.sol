@@ -318,7 +318,7 @@ contract MidasRouter is IMidasRouter {
         address _tokenY,
         uint24[] calldata _ids,
         uint256 _deadline
-    ) external override returns (uint256 idAmount, uint128 lpTokenId) {
+    ) public override returns (uint256 idAmount, uint128 lpTokenId) {
         if (_deadline < block.timestamp) revert Router__Expired();
         address _pair;
         uint256 _amount;
@@ -389,9 +389,9 @@ contract MidasRouter is IMidasRouter {
         uint24[] memory _id;
         _pair = factory.getPairERC721(_tokenX, _tokenY);
         _amount = _getAmountsToAdd(_pair, _ids);
+        IERC20(_tokenY).safeTransferFrom(msg.sender, _pair, _amount);
         _length = _ids.length;
         _id = new uint24[](1);
-        IERC20(_tokenY).safeTransferFrom(msg.sender, _pair, _amount);
         lpTokenIds = new uint128[](_ids.length);
         for (uint256 i; i < _length; ) {
             _id[0] = _ids[i];
@@ -406,6 +406,45 @@ contract MidasRouter is IMidasRouter {
             }
         }
     }
+
+    /// @notice The function to open multi limit buy order with ETH
+    /// @param _tokenX      The address of ERC721 assets
+    /// @param _tokenY      The address of ERC20 assets
+    /// @param _ids         The array of bin Ids where to add liquidity
+    /// @param _deadline    The deadline of the tx
+    /// @return lpTokenIds   The ID of the LP token
+    function openMultiLimitBuyOrderETH(
+        address _tokenX,
+        address _tokenY,
+        uint24[] calldata _ids,
+        uint256 _deadline
+    ) external payable override returns (uint128[] memory lpTokenIds) {
+        if (_deadline < block.timestamp) revert Router__Expired();
+        if (_tokenY != address(weth)) revert Router__WrongPair();
+        address _pair;
+        uint256 _amount;
+        uint256 _length;
+        uint24[] memory _id;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _amount = _getAmountsToAdd(_pair, _ids);
+        _wethDepositAndTransfer(_pair, _amount);
+        _length = _ids.length;
+        _id = new uint24[](1);
+        lpTokenIds = new uint128[](_ids.length);
+        for (uint256 i; i < _length; ) {
+            _id[0] = _ids[i];
+            (, uint128 lpTokenId) = IMidasPair721(_pair).mintFT(
+                _id,
+                msg.sender,
+                true
+            );
+            lpTokenIds[i] = lpTokenId;
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
 
     /// @notice The function to open limit order
     /// @param _tokenX      The address of ERC721 assets
