@@ -407,6 +407,45 @@ contract MidasRouter is IMidasRouter {
         }
     }
 
+    /// @notice The function to open multi limit buy order with ETH
+    /// @param _tokenX      The address of ERC721 assets
+    /// @param _tokenY      The address of WETH assets
+    /// @param _ids         The array of bin Ids where to add liquidity
+    /// @param _deadline    The deadline of the tx
+    /// @return lpTokenIds   The ID of the LP token
+    function openMultiLimitBuyOrdersETH(
+        address _tokenX,
+        address _tokenY,
+        uint24[] calldata _ids,
+        uint256 _deadline
+    ) external payable override returns (uint128[] memory lpTokenIds) {
+        if (_deadline < block.timestamp) revert Router__Expired();
+        if (_tokenY != address(weth)) revert Router__WrongPair();
+        address _pair;
+        uint256 _amount;
+        uint256 _length;
+        uint24[] memory _id;
+        _pair = factory.getPairERC721(_tokenX, _tokenY);
+        _amount = _getAmountsToAdd(_pair, _ids);
+        _length = _ids.length;
+        _id = new uint24[](1);
+        lpTokenIds = new uint128[](_ids.length);
+        for (uint256 i; i < _length; ) {
+            _id[0] = _ids[i];
+            _amount = _getAmountsToAdd(_pair, _id);
+            _wethDepositAndTransfer(_pair, _amount);
+            (, uint128 lpTokenId) = IMidasPair721(_pair).mintFT(
+                _id,
+                msg.sender,
+                true
+            );
+            lpTokenIds[i] = lpTokenId;
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
     /// @notice The function to open limit order
     /// @param _tokenX      The address of ERC721 assets
     /// @param _tokenY      The address of ERC20 assets
@@ -468,7 +507,7 @@ contract MidasRouter is IMidasRouter {
     /// @return ftAmount    The amount of ERC20 need to transfer
     function _getAmountsToAdd(
         address _pair,
-        uint24[] calldata _ids
+        uint24[] memory _ids
     ) internal pure returns (uint128 ftAmount) {
         for (uint256 i; i < _ids.length; ) {
             ftAmount += IMidasPair721(_pair).getPriceFromBin(_ids[i]);
