@@ -427,13 +427,12 @@ contract MidasRouter is IMidasRouter {
         uint24[] memory _id;
         _pair = factory.getPairERC721(_tokenX, _tokenY);
         _amount = _getAmountsToAdd(_pair, _ids);
+        _wethDepositAndTransfer(_pair, _amount);
         _length = _ids.length;
         _id = new uint24[](1);
         lpTokenIds = new uint128[](_ids.length);
         for (uint256 i; i < _length; ) {
             _id[0] = _ids[i];
-            _amount = _getAmountsToAdd(_pair, _id);
-            _wethDepositAndTransfer(_pair, _amount);
             (, uint128 lpTokenId) = IMidasPair721(_pair).mintFT(
                 _id,
                 msg.sender,
@@ -507,7 +506,7 @@ contract MidasRouter is IMidasRouter {
     /// @return ftAmount    The amount of ERC20 need to transfer
     function _getAmountsToAdd(
         address _pair,
-        uint24[] memory _ids
+        uint24[] calldata _ids
     ) internal pure returns (uint128 ftAmount) {
         for (uint256 i; i < _ids.length; ) {
             ftAmount += IMidasPair721(_pair).getPriceFromBin(_ids[i]);
