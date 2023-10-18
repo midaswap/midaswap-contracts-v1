@@ -98,7 +98,7 @@ library TreeMath {
     }
 
     /**
-     * @dev Returns the first id in the tree that is lower than or equal to the given id.
+     * @dev Returns the first id in the tree that is strictly lower than the given id.
      * It will return type(uint24).max if there is no such id.
      * @param tree The tree
      * @param id The id
@@ -167,7 +167,7 @@ library TreeMath {
     }
 
     /**
-     * @dev Returns the first id in the tree that is higher than or equal to the given id.
+     * @dev Returns the first id in the tree that is strictly higher than the given id.
      * It will return 0 if there is no such id.
      * @param tree The tree
      * @param id The id
