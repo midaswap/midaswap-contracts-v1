@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.20;
 
 import {LPToken} from "./LPToken.sol";
 import {NoDelegateCall} from "./NoDelegateCall.sol";
